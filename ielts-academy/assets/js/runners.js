@@ -213,6 +213,7 @@
       title: opts.title || "Listening · 40 questions",
       table: "listening",
       groups: T.groups,
+      review: { kind: "listening", source: T.parts },
       onCheck(res) {
         $$(".transcript", trHost).forEach((t) => t.classList.add("reveal"));
         if (trHost.hidden) btnTr.textContent = "📜 Show transcripts (answers highlighted)";
@@ -234,7 +235,8 @@
       <div class="tabs" data-tabs>
         <div class="tab-list" role="tablist">${R.passages.map((p, i) => `<button data-tab="p${i}">Passage ${i + 1} · ${ranges[i]}</button>`).join("")}</div>
         ${R.passages.map((p, i) => `<div class="tab-panel" data-panel="p${i}"><div class="reader" data-p="${i}"></div></div>`).join("")}
-      </div>`;
+      </div>
+      <div class="rr-review" hidden></div>`;
     const mounts = [];
     R.passages.forEach((p, i) => {
       const reader = $(`.reader[data-p="${i}"]`, host);
@@ -257,6 +259,8 @@
       table: "reading-ac",
       timer: opts.timer === false ? null : { minutes: 60, label: "Time left", warnAt: 600 },
       groups: mounts,
+      review: { kind: "reading", source: R.passages },
+      reviewMount: $(".rr-review", host),
       onCheck: opts.onCheck,
     });
     return { quiz, destroy() { if (quiz.timer) quiz.timer.pause(); } };

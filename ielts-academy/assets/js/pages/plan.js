@@ -145,7 +145,9 @@
     ? `<div class="table-wrap"><table class="t compact"><thead><tr><th>Practice</th><th class="num">Last score</th><th class="num">Best</th><th class="num">Est. band</th><th class="num">Attempts</th><th>Last attempt</th></tr></thead><tbody>${keys.map((k) => {
         const r = res[k];
         const m = k.match(/^practice:t(\d+):(\w+)$/);
-        const label = LABELS[k] || (m ? `Practice Test ${m[1]} · ${m[2][0].toUpperCase() + m[2].slice(1)}` : k);
+        const c = k.match(/^cambridge:b(\d+)t(\d+):(\w+)$/);
+        const cap = (x) => x[0].toUpperCase() + x.slice(1);
+        const label = LABELS[k] || (m ? `Practice Test ${m[1]} · ${cap(m[2])}` : c ? `Cambridge ${c[1]} · Test ${c[2]} · ${cap(c[3])}` : k);
         return `<tr><td>${esc(label)}</td><td class="num">${r.raw}/${r.total}</td><td class="num">${r.best}/${r.total}</td><td class="num">${r.band != null ? fmtBand(r.band) : "–"}</td><td class="num">${r.attempts || 1}</td><td>${esc(new Date(r.date).toLocaleDateString())}</td></tr>`;
       }).join("")}</tbody></table></div>`
     : `<p class="muted">No results yet — try the <a href="listening.html#practice">Listening</a> or <a href="reading.html#practice">Reading</a> test.</p>`;

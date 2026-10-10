@@ -4,7 +4,7 @@
    ========================================================================= */
 (function () {
   "use strict";
-  const { $, $$, esc, store, toast, TTS, Timer, overallBand, fmtBand, getResults, initTabs } = window.IELTS;
+  const { $, $$, esc, store, overallBand, fmtBand, getResults } = window.IELTS;
   const INDEX = window.IELTS_TEST_INDEX || [];
   const SK = {
     listening: { name: "Listening", icon: "🎧", short: "L", accent: "#70cff8" },
@@ -13,10 +13,6 @@
     speaking: { name: "Speaking", icon: "🎙️", short: "S", accent: "#a78bfa" },
   };
   const ORDER = ["listening", "reading", "writing", "speaking"];
-  const BANDS = Array.from({ length: 13 }, (_, i) => 3 + i * 0.5);
-  const bandSelect = (cls, v, data = "") => `<select class="inp ${cls}" ${data}>${BANDS.slice().reverse().map((b) => `<option value="${b}" ${+v === b ? "selected" : ""}>${b.toFixed(1)}</option>`).join("")}</select>`;
-  const halfDown = (x) => Math.floor(x * 2 + 1e-9) / 2;
-  const halfNear = (x) => Math.round(x * 2) / 2;
 
   /* ================================================== Loading */
   const VERSION = ((document.querySelector('script[src*="core.js"]') || {}).src || "").split("v=")[1] || "";
@@ -87,7 +83,7 @@
   let session = null, current = null;
   const body = $("#runner-body"), foot = $("#runner-foot");
 
-  async function start(n, what) {
+  async function start(n, what, review) {
     if (current && current.destroy) current.destroy();
     history.replaceState(null, "", `#t=${n}&s=${what}`);
     $("#runner-empty").hidden = true;
@@ -99,6 +95,13 @@
     try { T = await loadTest(n); } catch (err) { body.innerHTML = `<div class="callout warn"><div class="ci">⚠️</div><div>${esc(err.message)}</div></div>`; return; }
     session = { n, T, full: what === "full", steps: what === "full" ? [...ORDER, "result"] : [what], i: 0, res: {} };
     renderStep();
+    if (review && current && current.quiz) current.quiz.showLastAttempt();
+  }
+  /** Re-open a submitted Listening/Reading paper with its answers, marks and explanations. */
+  function openReview(n, skill) {
+    pick.test = n; pick.mode = "skill"; pick.skill = skill;
+    paintPick();
+    start(n, skill, true);
   }
 
   function renderStep() {
@@ -153,209 +156,22 @@
     $("#choose").scrollIntoView({ behavior: "smooth" });
   });
 
-  /* ================================================== Writing */
-  const words = (s) => (s.trim().match(/\S+/g) || []).filter((w) => /[A-Za-z0-9]/.test(w)).length;
+  /* ================================================== Writing & Speaking (shared rooms in rooms.js) */
   function runWriting(host, W, n) {
-    const saved = self()["t" + n] || {};
-    const crit = saved.wcrit || { t1: [6, 6, 6, 6], t2: [6, 6, 6, 6] };
-    const task = (k, t) => `
-      <div class="task-panel">
-        <div>
-          <div class="studio-prompt"><b>Task ${k} · about ${k === 1 ? 20 : 40} minutes.</b> ${esc(t.prompt).replace(/ • /g, "<br>• ")}</div>
-          ${t.chart ? window.IELTS.Charts.render(t.chart) : ""}
-          <details class="acc"><summary>Band 7 plan — open after you finish</summary><div class="acc-body"><ul class="small">${t.plan.map((p) => `<li>${esc(p)}</li>`).join("")}</ul></div></details>
-        </div>
-        <div>
-          <textarea data-task="${k}" spellcheck="false" placeholder="Write your Task ${k} answer here…"></textarea>
-          <div class="studio-stats"><span>Words: <b class="wc">0</b> / ${k === 1 ? 150 : 250}</span><span>Paragraphs: <b class="pc">0</b></span><span class="saved small"></span></div>
-        </div>
-      </div>`;
-    host.innerHTML = `
-      <div class="quiz-bar"><span class="qb-title">Writing · 2 tasks · 60 minutes</span><span class="qb-count">Task 2 counts twice as much as Task 1</span><span class="spacer"></span><span class="w-timer"></span></div>
-      <div class="tabs" data-tabs>
-        <div class="tab-list" role="tablist"><button data-tab="t1">Task 1</button><button data-tab="t2">Task 2</button><button data-tab="self">Self-assessment</button></div>
-        <div class="tab-panel" data-panel="t1">${task(1, W.task1)}</div>
-        <div class="tab-panel" data-panel="t2">${task(2, W.task2)}</div>
-        <div class="tab-panel" data-panel="self">
-          <div class="glass card">
-            <p class="small">Score each criterion honestly against the <a href="writing.html#criteria" target="_blank">Band 7 descriptors</a>. Compare with the model answers and the Band 7 plans. Each task's score is the average of its four criteria (rounded down, to be safe); the Writing band weights Task 2 twice.</p>
-            <h4>Task 1</h4><div class="crit-grid">${["Task Achievement", "Coherence & Cohesion", "Lexical Resource", "Grammar"].map((c, i) => `<label>${c}${bandSelect("wcrit", crit.t1[i], `data-t="t1" data-i="${i}"`)}</label>`).join("")}</div>
-            <h4>Task 2</h4><div class="crit-grid">${["Task Response", "Coherence & Cohesion", "Lexical Resource", "Grammar"].map((c, i) => `<label>${c}${bandSelect("wcrit", crit.t2[i], `data-t="t2" data-i="${i}"`)}</label>`).join("")}</div>
-            <div class="calc-out" id="w-out"></div>
-          </div>
-        </div>
-      </div>`;
-    initTabs(host);
-    const timer = new Timer($(".w-timer", host), { minutes: 60, label: "Time left", warnAt: 600 });
-    let saveT = null;
-    $$("textarea", host).forEach((ta) => {
-      const key = `pw:${n}:${ta.dataset.task}`;
-      ta.value = store.get(key, "");
-      const panel = ta.parentElement;
-      const stat = () => {
-        const w = words(ta.value), min = ta.dataset.task === "1" ? 150 : 250;
-        const wc = $(".wc", panel); wc.textContent = w; wc.className = "wc " + (w >= min ? "wc-ok" : w > min * 0.7 ? "wc-low" : "");
-        $(".pc", panel).textContent = ta.value.split(/\n+/).filter((p) => p.trim()).length;
-      };
-      stat();
-      ta.addEventListener("input", () => {
-        stat();
-        if (!timer.running && !timer.ended && timer.left === timer.total) timer.start();
-        clearTimeout(saveT);
-        saveT = setTimeout(() => { store.set(key, ta.value); $(".saved", panel).textContent = "✓ Draft saved"; }, 500);
-      });
+    const s = self()["t" + n] || {};
+    return window.IELTS.WritingRoom(host, W, {
+      draftKey: (k) => `pw:${n}:${k}`,
+      saved: { band: s.writing, crit: s.wcrit },
+      onScore: (band, crit) => { setSelf(n, { writing: band, wcrit: crit }); renderGrid(); },
     });
-    const out = $("#w-out", host);
-    const compute = (save = true) => {
-      $$(".wcrit", host).forEach((s) => { crit[s.dataset.t][+s.dataset.i] = +s.value; });
-      const t1 = halfDown(crit.t1.reduce((a, b) => a + b, 0) / 4), t2 = halfDown(crit.t2.reduce((a, b) => a + b, 0) / 4);
-      const band = halfNear((t1 + 2 * t2) / 3);
-      const w1 = words(store.get(`pw:${n}:1`, "")), w2 = words(store.get(`pw:${n}:2`, ""));
-      out.innerHTML = `<div><span class="small muted">Writing band (estimate)</span><div class="big ${band >= 7 ? "c-green" : ""}">${fmtBand(band)}</div></div>
-        <div class="small">Task 1: ${fmtBand(t1)} · Task 2: ${fmtBand(t2)}<br>Words: Task 1 ${w1}/150 · Task 2 ${w2}/250
-        ${w1 < 150 || w2 < 250 ? `<br><span class="c-amber">⚠ Under-length answers lose marks in Task Achievement / Response.</span>` : ""}</div>`;
-      if (save) setSelf(n, { writing: band, wcrit: crit });
-      else if (saved.writing == null) out.insertAdjacentHTML("beforeend", `<div class="small c-amber">Not saved yet — change any score to record your self-assessment.</div>`);
-      return band;
-    };
-    host.addEventListener("change", (e) => { if (e.target.classList.contains("wcrit")) { compute(); renderGrid(); } });
-    compute(saved.writing != null);
-    return { destroy() { timer.pause(); }, band: compute };
   }
-
-  /* ================================================== Speaking */
   function runSpeaking(host, S, n) {
-    const saved = self()["t" + n] || {};
-    const crit = saved.scrit || [6, 6, 6, 6];
-    const seq = [{ kind: "intro" }];
-    S.part1.forEach((t) => t.qs.forEach((q, k) => seq.push({ kind: "p1", topic: t.topic, q, first: k === 0 })));
-    seq.push({ kind: "p2" });
-    S.part3.forEach((q) => seq.push({ kind: "p3", q }));
-    seq.push({ kind: "end" });
-    host.innerHTML = `
-      <div class="glass card">
-        <div class="stage sp-stage"><span data-s="p1">Part 1 · Interview</span><span data-s="p2">Part 2 · Long turn</span><span data-s="p3">Part 3 · Discussion</span><span data-s="end">Self-assessment</span></div>
-        <div class="cue-card sp-card"></div>
-        <div class="row mt">
-          <button class="btn primary sp-next" type="button">▶ Start the test</button>
-          <button class="btn ghost sp-repeat" type="button">🔁 Repeat question</button>
-          <span class="spacer"></span>
-          <button class="btn sp-rec" type="button">🎙️ Record whole test</button>
-          <span class="small muted sp-recst"></span>
-        </div>
-        <div class="recordings sp-recs"></div>
-      </div>
-      <div class="glass card mt sp-self" hidden>
-        <h4 style="margin-top:0">Self-assessment</h4>
-        <p class="small">Listen to your recording first. Use the <a href="speaking.html#format" target="_blank">Band 7 descriptors</a>; be strict about fluency (long pauses?) and grammar (errors in complex sentences?).</p>
-        <div class="crit-grid">${["Fluency & Coherence", "Lexical Resource", "Grammar", "Pronunciation"].map((c, i) => `<label>${c}${bandSelect("scrit", crit[i], `data-i="${i}"`)}</label>`).join("")}</div>
-        <div class="calc-out sp-out"></div>
-      </div>`;
-    const q = (s) => $(s, host);
-    const card = q(".sp-card"), btnNext = q(".sp-next"), btnRep = q(".sp-repeat");
-    let idx = -1, timerT = null, lastSaid = "";
-    const say = (t) => { lastSaid = t; if (TTS.ok) { TTS.cancel(); TTS.speak(t, { rate: 0.95, speaker: 2 }); } };
-    const stage = (s) => $$(".sp-stage span", host).forEach((el) => {
-      const ord = ["p1", "p2", "p3", "end"];
-      el.classList.toggle("on", el.dataset.s === s);
-      el.classList.toggle("done", ord.indexOf(el.dataset.s) < ord.indexOf(s));
+    const s = self()["t" + n] || {};
+    return window.IELTS.SpeakingRoom(host, S, {
+      name: `test${n}-speaking`, label: `Test ${n} speaking`,
+      saved: { band: s.speaking, crit: s.scrit },
+      onScore: (band, crit) => { setSelf(n, { speaking: band, scrit: crit }); renderGrid(); },
     });
-    card.innerHTML = `<p class="muted" style="margin:0">The examiner's questions will be read aloud. Answer out loud as if you were in the real test. Part 1 answers: 2–4 sentences. Part 3 answers: 4–6 sentences.</p>`;
-
-    function ring(secs, label, onDone) {
-      clearInterval(timerT);
-      let left = secs;
-      const paint = () => {
-        const r = $(".ring", card); if (!r) return;
-        r.style.setProperty("--p", ((secs - left) / secs) * 100);
-        r.style.setProperty("--rc", label === "talk" ? "var(--purple)" : "var(--blue)");
-        $(".ring b", card).textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
-        $(".ring small", card).textContent = label;
-      };
-      paint();
-      timerT = setInterval(() => { left--; paint(); if (left <= 0) { clearInterval(timerT); onDone(); } }, 1000);
-    }
-    function show() {
-      clearInterval(timerT);
-      const it = seq[idx];
-      btnRep.disabled = !(it.kind === "p1" || it.kind === "p3");
-      if (it.kind === "intro") {
-        stage("p1");
-        card.innerHTML = `<span class="badge purple">Part 1</span><p class="sp-q">Good morning. My name is Sarah, and I'm your examiner. In this first part, I'd like to ask you some questions about yourself.</p>`;
-        say("Good morning. My name is Sarah, and I'm your examiner. In this first part, I'd like to ask you some questions about yourself.");
-        btnNext.textContent = "▶ Next question";
-      } else if (it.kind === "p1" || it.kind === "p3") {
-        stage(it.kind);
-        const p1s = seq.filter((x) => x.kind === it.kind), pos = p1s.indexOf(it) + 1;
-        const lead = it.kind === "p1" && it.first ? `Let's talk about ${it.topic.toLowerCase()}. ` : it.kind === "p3" && pos === 1 ? `We've been talking about ${S.part2.theme || "this topic"}, and now I'd like to discuss some more general questions related to this. ` : "";
-        card.innerHTML = `<span class="badge purple">Part ${it.kind === "p1" ? 1 : 3}${it.topic ? " · " + esc(it.topic) : ""}</span> <span class="small muted">Question ${pos} of ${p1s.length}</span><p class="sp-q">${esc(it.q)}</p>`;
-        say(lead + it.q);
-        btnNext.textContent = "▶ Next question";
-      } else if (it.kind === "p2") {
-        stage("p2");
-        card.innerHTML = `<div class="grid grid-2" style="align-items:start">
-          <div><span class="badge purple">Part 2</span><h4 style="margin:10px 0 6px">${esc(S.part2.card)}</h4><p class="small" style="margin:0">You should say:</p><ul>${S.part2.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul><p class="cc-foot">${esc(S.part2.end)}</p></div>
-          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div class="ring"><div><span><b>1:00</b><small>prep</small></span></div></div><textarea class="inp" rows="6" style="flex:1 1 160px;min-height:120px" placeholder="Your notes…"></textarea></div></div>`;
-        say("Now I'm going to give you a topic, and I'd like you to talk about it for one to two minutes. Before you talk, you'll have one minute to think about what you're going to say. You can make some notes if you wish.");
-        btnNext.textContent = "⏭ Skip to Part 3";
-        ring(60, "prep", () => {
-          say("Alright? Remember, you have one to two minutes for this, so don't worry if I stop you. Can you start speaking now, please?");
-          ring(120, "talk", () => { say("Thank you."); btnNext.textContent = "▶ Continue to Part 3"; });
-        });
-      } else {
-        stage("end");
-        card.innerHTML = `<p class="sp-q" style="margin:0">Thank you. That is the end of the speaking test. 🎉</p><p class="small muted">Stop the recording, listen back, then score yourself below.</p>`;
-        say("Thank you. That is the end of the speaking test.");
-        btnNext.disabled = true;
-        q(".sp-self").hidden = false;
-        if (rec.active) rec.stop();
-      }
-    }
-    btnNext.addEventListener("click", () => { if (idx < seq.length - 1) { idx++; show(); } });
-    btnRep.addEventListener("click", () => { if (lastSaid) say(seq[idx].q); });
-    btnRep.disabled = true;
-
-    // Recorder (kept in memory only)
-    const rec = {
-      active: false, mr: null, stream: null, chunks: [], t0: 0,
-      async start() {
-        if (!navigator.mediaDevices || !window.MediaRecorder) { toast("Recording isn't supported in this browser."); return; }
-        try { this.stream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch (e) { toast("Microphone permission was denied."); return; }
-        this.chunks = []; this.mr = new MediaRecorder(this.stream);
-        this.mr.ondataavailable = (e) => { if (e.data.size) this.chunks.push(e.data); };
-        this.mr.onstop = () => {
-          const url = URL.createObjectURL(new Blob(this.chunks, { type: this.mr.mimeType || "audio/webm" }));
-          const secs = Math.round((Date.now() - this.t0) / 1000);
-          const div = document.createElement("div"); div.className = "rec";
-          div.innerHTML = `<b>Test ${n} speaking</b><span class="muted">${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}</span><audio controls src="${url}"></audio><a class="btn sm ghost" download="ielts-test${n}-speaking.webm" href="${url}">⬇ Save</a>`;
-          q(".sp-recs").prepend(div);
-        };
-        this.mr.start(); this.active = true; this.t0 = Date.now(); paintRec();
-      },
-      stop() { if (!this.active) return; this.mr.stop(); this.stream.getTracks().forEach((t) => t.stop()); this.active = false; paintRec(); },
-    };
-    let recT = null;
-    function paintRec() {
-      const b = q(".sp-rec"), st = q(".sp-recst");
-      clearInterval(recT);
-      if (rec.active) {
-        b.textContent = "■ Stop recording"; b.classList.add("danger");
-        const u = () => { const s = Math.round((Date.now() - rec.t0) / 1000); st.innerHTML = `<span class="rec-dot"></span> ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
-        u(); recT = setInterval(u, 1000);
-      } else { b.textContent = "🎙️ Record whole test"; b.classList.remove("danger"); st.textContent = ""; }
-    }
-    q(".sp-rec").addEventListener("click", () => (rec.active ? rec.stop() : rec.start()));
-
-    const compute = () => {
-      $$(".scrit", host).forEach((s) => { crit[+s.dataset.i] = +s.value; });
-      const band = halfDown(crit.reduce((a, b) => a + b, 0) / 4);
-      q(".sp-out").innerHTML = `<div><span class="small muted">Speaking band (estimate)</span><div class="big ${band >= 7 ? "c-green" : ""}">${fmtBand(band)}</div></div><div class="small">Average of the four criteria, rounded down to be safe.</div>`;
-      setSelf(n, { speaking: band, scrit: crit });
-      return band;
-    };
-    host.addEventListener("change", (e) => { if (e.target.classList.contains("scrit")) { compute(); renderGrid(); } });
-    if (saved.speaking != null) { q(".sp-self").hidden = false; compute(); }
-    return { destroy() { clearInterval(timerT); clearInterval(recT); TTS.cancel(); if (rec.active) rec.stop(); }, band: compute };
   }
 
   /* ================================================== Result (full test) */
@@ -384,6 +200,8 @@
       <div class="row">
         ${o ? `<button class="btn" type="button" id="to-tracker">📈 Save to mock-test tracker</button>` : ""}
         <a class="btn ghost" href="plan.html#tracker">Open tracker</a>
+        ${res.listening ? `<button class="btn ghost" type="button" data-review="listening">📋 Listening answers &amp; explanations</button>` : ""}
+        ${res.reading ? `<button class="btn ghost" type="button" data-review="reading">📋 Reading answers &amp; explanations</button>` : ""}
         ${n < 10 ? `<button class="btn primary" type="button" id="next-full">Next: full Test ${n + 1} →</button>` : ""}
       </div>`;
     const t = $("#to-tracker", host);
@@ -393,6 +211,7 @@
       store.set("mocks", mocks);
       t.disabled = true; t.textContent = "✓ Saved to tracker";
     });
+    $$("[data-review]", host).forEach((b) => b.addEventListener("click", () => openReview(n, b.dataset.review)));
     const nx = $("#next-full", host);
     if (nx) nx.addEventListener("click", () => { pick.test = n + 1; pick.mode = "full"; paintPick(); start(n + 1, "full"); });
     return null;

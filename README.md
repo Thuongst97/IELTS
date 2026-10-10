@@ -17,9 +17,10 @@ plain HTML/CSS/JS, no build step, a shared `core.js` runtime (header, sidebar, s
 | 06 | `vocabulary.html` | 120 topic words with collocations, examples and Vietnamese meanings, collocation/paraphrase quizzes, spaced-repetition flashcards, linking words |
 | 07 | `grammar.html` | Complex sentences, tenses, conditionals, clauses, passive, articles, punctuation, error-correction quiz |
 | 08 | `plan.html` | Gap diagnosis, 12-week roadmap with saved checklists, daily routine, mock-test tracker with chart, test-day checklist, resources |
-| 09 | `practice.html` | **10 full practice tests.** Pick a test and one skill, or a full 4-skill test (L → R → W → S) with timers and a final band report. Each test: Listening 4 parts / 40 Q with audio, Reading 3 passages / 40 Q, Writing Task 1 (chart) + Task 2, Speaking Parts 1–3. Deep links: `practice.html#t=3&s=reading`, `#t=5&s=full` |
+| 09 | `practice.html` | **10 full practice tests.** Pick a test and one skill, or a full 4-skill test (L → R → W → S) with timers and a final band report. Each test: Listening 4 parts / 40 Q with audio, Reading 3 passages / 40 Q, Writing Task 1 (chart) + Task 2, Speaking Parts 1–3. Deep links: `practice.html#t=3&s=reading`, `#t=5&s=full`. After marking, **Answers & explanations** shows the key, the evidence sentence (transcript or passage), why your answer didn't score and a tip for the question type; submitted attempts are saved for later review |
+| 10 | `cambridge.html` | **CAMBRIDGE_TEST companion** for the official Cambridge IELTS books (15–19 recommended, 1–21 supported). Online 40-box answer sheets with timers, the book's answer key typed or pasted once (alternatives `/`, optional words `( )`, either-order pairs), marking and bands, a mistake-by-mistake review with automatic diagnosis, Writing and Speaking rooms, results table and a mistake profile. No Cambridge content is stored in the repo; keys and answers stay in the learner's browser. Deep link: `cambridge.html#b=17&t=2&s=reading` |
 
-All practice passages, recording scripts and model answers are original training material written in the IELTS style.
+All practice passages, recording scripts and model answers are original training material written in the IELTS style. Cambridge IELTS tests are copyrighted by Cambridge University Press & Assessment and are not reproduced here; the Cambridge page is only an answer sheet and review tool for learners who own the books.
 Progress (quiz results, drafts, flashcards, checklists) is stored only in the browser's `localStorage`.
 
 ## Run locally
@@ -46,6 +47,8 @@ ielts-academy/
   assets/js/core.js          site map, layout, search, storage, timer, TTS, band helpers
   assets/js/quiz.js          shared quiz engine (gap, MCQ, TFNG/YNNG, matching, choose-two)
   assets/js/runners.js       shared Listening/Reading runners and Task 1 charts (line, bar, pie, table, process)
+  assets/js/review.js        answer review: evidence finder, mistake diagnosis, question-type tips
+  assets/js/rooms.js         shared Writing and Speaking test rooms (practice tests + Cambridge companion)
   assets/js/data/*.js        module tests, vocabulary, speaking bank
   assets/js/data/tests/      practice tests: index.js (picker + builders) and test-01.js … test-10.js (loaded on demand)
   assets/js/pages/*.js       page-specific behaviour

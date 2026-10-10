@@ -19,8 +19,12 @@
          { n: [21, 22], type: "multi", text: "…", options: [["A","…"],…], answer: ["B","E"] },
        ],
      }],
+     review: { kind: "listening" | "reading", source },   // optional answer review
+     reviewMount: Element,                               // where to show it
      onCheck(result), onReset()
    })
+   After marking, the answers are kept as "attempt:<id>" so the review can be
+   reopened later ("Show my last attempt").
    ========================================================================= */
 (function () {
   "use strict";
@@ -56,8 +60,9 @@
       this.total = this.questions.reduce((s, q) => s + marksOf(q), 0);
       this.checked = false;
       this.render();
-      this.restore();
+      const hadDraft = this.restore();
       this.updateCount();
+      if (!hadDraft) this.offerLastAttempt();
     }
 
     /* ------------------------------------------------ rendering */
@@ -73,8 +78,11 @@
           <button class="btn sm primary" data-act="check" type="button">✓ Check answers</button>
           <button class="btn sm ghost" data-act="reset" type="button" title="Clear all answers">⟲ Reset</button>
         </div>
+        <div class="quiz-last small" hidden></div>
         <div class="quiz-result glass" aria-live="polite"></div>
-        <div class="qgroups"></div>`;
+        <div class="qgroups"></div>
+        <div class="quiz-review" hidden></div>`;
+      this.reviewHost = s.reviewMount || $(".quiz-review", this.host);
       const groupsHost = $(".qgroups", this.host);
       s.groups.forEach((g) => {
         const el = this.renderGroup(g);
@@ -86,6 +94,8 @@
         if (!b || !this.host.contains(b)) return;
         if (b.dataset.act === "check") this.check();
         if (b.dataset.act === "reset") this.reset();
+        if (b.dataset.act === "review") this.reviewHost.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (b.dataset.act === "last") this.showLastAttempt();
       });
     }
 
@@ -165,14 +175,16 @@
     }
     saveDraft() {
       if (!this.spec.id || this.checked) return;
+      const last = $(".quiz-last", this.host);
+      if (last) last.hidden = true;
       const d = {};
       this.questions.forEach((q) => { d[qKey(q)] = this.valueOf(q); });
       store.set("draft:" + this.spec.id, d);
     }
-    restore() {
-      if (!this.spec.id) return;
-      const d = store.get("draft:" + this.spec.id, null);
-      if (!d) return;
+    restore(from) {
+      if (!this.spec.id && !from) return false;
+      const d = from || store.get("draft:" + this.spec.id, null);
+      if (!d) return false;
       this.questions.forEach((q) => {
         const v = d[qKey(q)], el = this.elFor(q);
         if (v == null || !el) return;
@@ -181,12 +193,34 @@
         else if (q.type === "multi") $$("input", el).forEach((i) => { i.checked = v.includes(i.value); });
         else $$("input", el).forEach((i) => { i.checked = i.value === v; });
       });
+      return true;
+    }
+    answers() {
+      const d = {};
+      this.questions.forEach((q) => { d[qKey(q)] = this.valueOf(q); });
+      return d;
+    }
+    offerLastAttempt() {
+      const a = this.spec.id && store.get("attempt:" + this.spec.id, null);
+      const box = $(".quiz-last", this.host);
+      if (!a || !box) return;
+      box.innerHTML = `📋 You submitted this test on <b>${esc(new Date(a.date).toLocaleDateString())}</b> (${a.raw}/${a.total}${a.band != null ? `, band ${fmtBand(a.band)}` : ""}). <button class="btn sm" type="button" data-act="last">Show my answers &amp; explanations</button> <span class="muted">or just start answering to try again.</span>`;
+      box.hidden = false;
+    }
+    showLastAttempt() {
+      const a = store.get("attempt:" + this.spec.id, null);
+      if (!a) return;
+      this.restore(a.answers);
+      this.updateCount();
+      this.check({ silent: true });
     }
 
     /* ------------------------------------------------ marking */
-    check() {
+    check(opts = {}) {
       let raw = 0;
-      const wrong = [];
+      const wrong = [], details = [];
+      const groupOf = new Map();
+      this.spec.groups.forEach((g) => g.questions.forEach((q) => groupOf.set(q, g)));
       this.questions.forEach((q) => {
         const el = this.elFor(q);
         const v = this.valueOf(q);
@@ -203,6 +237,7 @@
         }
         raw += q.type === "multi" ? got : ok ? 1 : 0;
         if (!ok) wrong.push(qLabel(q));
+        details.push({ q, group: groupOf.get(q), given: v, ok, got: q.type === "multi" ? got : ok ? 1 : 0 });
         el.classList.toggle("correct", ok);
         el.classList.toggle("wrong", !ok);
         const alt = q.type === "gap" && q.answer.length > 1 ? ` <span class="muted">(also accepted: ${q.answer.slice(1).map(esc).join(" / ")})</span>` : "";
@@ -214,13 +249,20 @@
       const band = s.table ? rawToBand(raw, this.total, s.table) : null;
       const pct = Math.round((raw / this.total) * 100);
       const res = { raw, total: this.total, band, pct };
-      if (s.id) saveResult(s.id, res);
-      this.showResult(res, wrong);
+      if (s.id && !opts.silent) {
+        saveResult(s.id, res);
+        store.set("attempt:" + s.id, { answers: this.answers(), date: new Date().toISOString(), raw, total: this.total, band });
+      }
+      this.details = details;
+      const last = $(".quiz-last", this.host);
+      if (last) last.hidden = true;
+      if (s.review && window.IELTS.Review) window.IELTS.Review.render(this.reviewHost, details, s.review);
+      this.showResult(res, wrong, opts.silent);
       if (s.onCheck) s.onCheck(res);
-      store.del("draft:" + s.id);
+      if (s.id) store.del("draft:" + s.id);
     }
 
-    showResult({ raw, total, band, pct }, wrong) {
+    showResult({ raw, total, band, pct }, wrong, silent) {
       const box = $(".quiz-result", this.host);
       const s = this.spec;
       const target = s.table === "reading-gt" ? 34 : 30;
@@ -237,7 +279,8 @@
       box.innerHTML = `
         <div class="qr-band ${band == null ? "" : band >= 7 ? "ok" : "low"}"><div>${band != null ? `<b>${fmtBand(band)}</b><small>est. band</small>` : `<b>${pct}%</b><small>score</small>`}</div></div>
         <div><h4>${raw} / ${total} correct</h4><p style="margin:0 0 8px">${msg}</p>
-        <div class="row">${time}${wrong.length ? `<span class="badge red">Missed: ${wrong.slice(0, 18).join(", ")}${wrong.length > 18 ? "…" : ""}</span>` : `<span class="badge green">Perfect score</span>`}</div></div>`;
+        ${silent ? `<p class="small muted" style="margin:0 0 8px">Showing your last submitted attempt. Press Reset to try again.</p>` : ""}
+        <div class="row">${this.spec.review ? `<button class="btn sm primary" type="button" data-act="review">📋 Answers &amp; explanations ↓</button>` : ""}${time}${wrong.length ? `<span class="badge red">Missed: ${wrong.slice(0, 18).join(", ")}${wrong.length > 18 ? "…" : ""}</span>` : `<span class="badge green">Perfect score</span>`}</div></div>`;
       box.classList.add("show");
       box.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -251,6 +294,7 @@
         $(".fb", el).innerHTML = "";
       });
       $(".quiz-result", this.host).classList.remove("show");
+      if (this.reviewHost) { this.reviewHost.innerHTML = ""; this.reviewHost.hidden = true; }
       this.checked = false;
       if (this.timer) this.timer.reset();
       store.del("draft:" + this.spec.id);

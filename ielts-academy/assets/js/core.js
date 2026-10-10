@@ -153,6 +153,18 @@
         ["how", "How to use the practice tests", "how to use tips exam conditions review"],
       ],
     },
+    {
+      id: "cambridge", file: "cambridge.html", num: "10", group: "Practice",
+      title: "Cambridge IELTS Tests: Answer Sheets, Marking & Review", short: "Cambridge Tests", icon: "📚", accent: "#f472b6",
+      desc: "Use your own Cambridge IELTS books (15–19 recommended): online answer sheets, timers, marking from the book's key, bands and a mistake-by-mistake review.",
+      sections: [
+        ["about", "How the Cambridge companion works", "cambridge books official past papers how it works copyright answer key"],
+        ["choose", "Choose a Cambridge test", "cambridge 15 16 17 18 19 20 21 test choose book"],
+        ["room", "Answer sheet & review", "answer sheet answer key mark review explanation mistakes"],
+        ["results", "My Cambridge results", "results scores bands tracker cambridge"],
+        ["analysis", "My mistake profile", "analysis mistakes question types weaknesses reasons"],
+      ],
+    },
   ];
 
   /* --------------------------------------------- Trusted references */
@@ -169,6 +181,7 @@
     guardian: ["The Guardian — long reads (reading practice)", "https://www.theguardian.com/news/series/the-long-read"],
     conversation: ["The Conversation — academic articles in plain English", "https://theconversation.com/"],
     youglish: ["YouGlish — hear any word in real speech", "https://youglish.com/"],
+    cup: ["Cambridge University Press & Assessment — publisher of the Cambridge IELTS books", "https://www.cambridge.org/"],
   };
   const REFS = {
     overview: ["ielts", "bcPrep", "idpPrep"],
@@ -181,6 +194,7 @@
     grammar: ["bcPrep", "camDict", "bbc"],
     plan: ["ielts", "bcPrep", "idpPrep", "bbc6", "guardian"],
     practice: ["ielts", "bcPrep", "idpPrep"],
+    cambridge: ["cup", "ielts", "bcPrep", "idpPrep"],
   };
 
   const $ = (s, r = document) => r.querySelector(s);
@@ -203,6 +217,9 @@
     },
     set(k, v) { try { localStorage.setItem(NS + k, JSON.stringify(v)); return true; } catch (e) { return false; } },
     del(k) { try { localStorage.removeItem(NS + k); } catch (e) { /* ignore */ } },
+    keys() {
+      try { return Object.keys(localStorage).filter((k) => k.startsWith(NS)).map((k) => k.slice(NS.length)); } catch (e) { return []; }
+    },
   };
 
   /* ------------------------------------------------ Band helpers */
@@ -348,7 +365,7 @@
     const host = $("#site-header");
     if (!host) return;
     const modLinks = SITE.map((p) => `<a href="${p.file}"><span class="dm-num">${p.num}</span><span><b>${p.icon} ${esc(p.short)}</b><i>${esc(p.desc)}</i></span></a>`).join("");
-    const nav = (id, label) => `<a href="${id}.html" class="${pageId === id ? "active" : ""}">${label}</a>`;
+    const nav = (id, label, also = []) => `<a href="${id}.html" class="${pageId === id || also.includes(pageId) ? "active" : ""}">${label}</a>`;
     host.outerHTML = `
       <header class="site-header">
         <button class="menu-btn" id="menu-btn" aria-label="Open table of contents">☰</button>
@@ -361,7 +378,7 @@
             <button aria-haspopup="true">Modules ▾</button>
             <div class="nav-drop-menu">${modLinks}</div>
           </div>
-          ${nav("overview", "Overview")}${nav("guide", "Guide")}${nav("listening", "Listening")}${nav("reading", "Reading")}${nav("writing", "Writing")}${nav("speaking", "Speaking")}${nav("practice", "Practice")}${nav("plan", "Plan")}
+          ${nav("overview", "Overview")}${nav("guide", "Guide")}${nav("listening", "Listening")}${nav("reading", "Reading")}${nav("writing", "Writing")}${nav("speaking", "Speaking")}${nav("practice", "Practice", ["cambridge"])}${nav("plan", "Plan")}
         </nav>
         <div class="header-spacer"></div>
         <div class="global-search" role="search">

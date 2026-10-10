@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cambridge IELTS Tests: Answer Sheets, Marking &amp; Review — IELTS 7.0 Academy</title>
+  <meta name="description" content="A companion for the official Cambridge IELTS books: online answer sheets with timers, marking from your book's answer key, band scores, a mistake-by-mistake review and a weakness profile.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="assets/css/main.css?v=__BUILD__">
+  <script>try{var t=localStorage.getItem("ielts-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-page="cambridge">
+  <div id="site-header"></div>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="content">
+      <div class="content-inner wide">
+
+        <header class="page-hero" style="--accent:#f472b6">
+          <nav class="crumbs"><a href="index.html">Home</a><span>/</span><span>Practice</span><span>/</span><span>Cambridge tests</span></nav>
+          <div class="eyebrow">Module 10 · Practice · CAMBRIDGE_TEST</div>
+          <h1>Cambridge IELTS Tests: Answer Sheets, Marking &amp; Review</h1>
+          <p class="lead">The official Cambridge IELTS books are the closest thing to the real exam. Do the test from <strong>your own book</strong>, and use this page as your exam room: answer sheets with timers, automatic marking from the book's answer key, your band, and a review of every mistake.</p>
+          <div class="page-meta"><span>📚 Cambridge 15–19: 20 tests</span><span>🎧📖 Answer sheets + marking</span><span>✍️🎙️ Writing &amp; Speaking rooms</span><span>📊 Mistake profile</span></div>
+        </header>
+
+        <div class="cat-switch" role="navigation" aria-label="Practice category">
+          <a href="practice.html"><b>📝 Academy tests</b><small>10 full tests built into this site</small></a>
+          <a href="cambridge.html" class="sel" aria-current="page"><b>📚 CAMBRIDGE_TEST</b><small>Your Cambridge IELTS books</small></a>
+        </div>
+
+        <section class="doc-section" id="about" data-title="How the Cambridge companion works">
+          <div class="sec-head"><h2><span class="sec-num">10.1</span>How the Cambridge companion works</h2></div>
+          <div class="callout warn"><div class="ci">©</div><div><span class="ct">Why the questions aren't on this site</span>
+            <p>Cambridge IELTS tests (passages, recordings, questions and answer keys) are copyrighted by Cambridge University Press &amp; Assessment, so they can't be republished on a public website. This page holds <b>no Cambridge content</b>. You bring the book; the site does everything else. The answers and keys you type stay <b>only in your browser</b>.</p></div></div>
+          <div class="grid grid-4 steps-4">
+            <div class="glass card accent" style="--accent:var(--blue)"><h4>1 · Do the test</h4><p class="small">Open your book and play the official audio (online resources). Type your answers into the 40-box answer sheet. The timer starts with your first answer.</p></div>
+            <div class="glass card accent" style="--accent:var(--gold)"><h4>2 · Enter the key</h4><p class="small">Copy the answer key from the back of the book once: box by box, or paste it all. Alternatives, optional words in brackets and either-order pairs are understood.</p></div>
+            <div class="glass card accent" style="--accent:var(--green)"><h4>3 · Mark &amp; review</h4><p class="small">Get your raw score and band, then go through every wrong answer: an automatic diagnosis (spelling, word limit, NOT GIVEN…), a fix, and a box for the evidence from the audioscript or passage.</p></div>
+            <div class="glass card accent" style="--accent:var(--purple)"><h4>4 · Track your weaknesses</h4><p class="small">Results build a profile across all your Cambridge tests: accuracy by question type and the reasons you lose marks, so you know what to practise next.</p></div>
+          </div>
+          <div class="callout tip"><div class="ci">📌</div><div><span class="ct">Which books?</span><p><b>Cambridge IELTS 15–19</b> (20 tests) are the closest to today's exam, so start there. Keep the newest books (20–21) for your final mocks in the last 3–4 weeks. The older books (1–14) are still useful for extra Reading and Listening practice. Use the Academic or General Training edition that matches your test.</p></div></div>
+        </section>
+
+        <section class="doc-section" id="choose" data-title="Choose a Cambridge test">
+          <div class="sec-head"><h2><span class="sec-num">10.2</span>Choose a Cambridge test</h2></div>
+          <div class="pick-label">1 · Skill</div>
+          <div class="skill-pick" id="cam-skill">
+            <button type="button" data-skill="listening" style="--accent:#70cff8">🎧 Listening<small>30 min · 40 answers</small></button>
+            <button type="button" data-skill="reading" style="--accent:#34d399">📖 Reading<small>60 min · 40 answers</small></button>
+            <button type="button" data-skill="writing" style="--accent:#d4af37">✍️ Writing<small>60 min · 2 tasks</small></button>
+            <button type="button" data-skill="speaking" style="--accent:#a78bfa">🎙️ Speaking<small>11–14 min · 3 parts</small></button>
+          </div>
+          <div class="pick-label" style="margin-top:16px">2 · Books</div>
+          <div class="mode-pick cam-ranges" id="cam-ranges"></div>
+          <div class="pick-label" style="margin-top:16px">3 · Test</div>
+          <div id="cam-grid"></div>
+          <div class="start-bar glass">
+            <div id="cam-summary" class="small"></div>
+            <span class="spacer"></span>
+            <button class="btn primary" id="cam-start" type="button">Open answer sheet →</button>
+          </div>
+        </section>
+
+        <section class="doc-section" id="room" data-title="Answer sheet & review">
+          <div class="sec-head"><h2><span class="sec-num">10.3</span>Answer sheet &amp; review</h2></div>
+          <div id="cam-empty" class="callout note"><div class="ci">📘</div><div><span class="ct">No test open</span><p>Choose a skill, a book and a test above, then press <b>Open answer sheet</b>. You can also link straight to one, e.g. <code>cambridge.html#b=17&amp;t=2&amp;s=reading</code>.</p></div></div>
+          <div id="cam-wrap" hidden>
+            <div class="runner-head glass">
+              <div><div class="eyebrow" id="cam-eyebrow"></div><h3 id="cam-title" style="margin:0"></h3></div>
+              <span class="spacer"></span>
+              <button class="btn sm ghost" id="cam-exit" type="button">✕ Close</button>
+            </div>
+            <div id="cam-body"></div>
+          </div>
+        </section>
+
+        <section class="doc-section" id="results" data-title="My Cambridge results">
+          <div class="sec-head"><h2><span class="sec-num">10.4</span>My Cambridge results</h2></div>
+          <p class="small muted">Listening and Reading bands use typical conversion tables. Each Cambridge book prints its own table, which can differ by a mark. Writing and Speaking are your self-assessments. Send a complete test to the <a href="plan.html#tracker">mock-test tracker</a> to chart your progress.</p>
+          <div id="cam-results"></div>
+        </section>
+
+        <section class="doc-section" id="analysis" data-title="My mistake profile">
+          <div class="sec-head"><h2><span class="sec-num">10.5</span>My mistake profile</h2></div>
+          <div id="cam-analysis"></div>
+          <p class="small muted mt">Next steps: <a href="guide.html#listening">Listening study path</a> · <a href="guide.html#reading">Reading study path</a> · <a href="reading.html#tfng">TRUE/FALSE/NOT GIVEN trainer</a> · <a href="listening.html#dictation">Spelling &amp; number dictation</a></p>
+        </section>
+
+        <div id="pager"></div>
+      </div>
+    </main>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="assets/js/data/vocab.js?v=__BUILD__"></script>
+  <script src="assets/js/core.js?v=__BUILD__"></script>
+  <script src="assets/js/review.js?v=__BUILD__"></script>
+  <script src="assets/js/runners.js?v=__BUILD__"></script>
+  <script src="assets/js/rooms.js?v=__BUILD__"></script>
+  <script src="assets/js/pages/cambridge.js?v=__BUILD__"></script>
+</body>
+</html>
