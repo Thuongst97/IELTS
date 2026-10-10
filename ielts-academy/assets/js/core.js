@@ -623,9 +623,6 @@
     host.outerHTML = `
       <footer class="site-footer">
         <div class="footer-inner">
-          <div><b style="color:var(--text)">IELTS 7.0 Academy</b> — A self-study handbook for reaching Band 7 in Listening, Reading, Writing and Speaking.<br>
-          All practice tests, passages, recording scripts and model answers are original training material written in the IELTS style; they are not official IELTS test content.<br>
-          Your progress is stored only in this browser.</div>
           <div class="footer-links">
             ${SITE.map((p) => `<a href="${p.file}">${esc(p.short)}</a>`).join("")}
           </div>
