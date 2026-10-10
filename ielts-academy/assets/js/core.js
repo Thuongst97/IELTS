@@ -10,7 +10,7 @@
   /* ------------------------------------------------------------ Site map */
   const SITE = [
     {
-      id: "overview", file: "overview.html", num: "01", group: "Start here",
+      id: "overview", file: "overview.html", group: "Start here",
       title: "IELTS Overview: Structure, Scoring & Band 7 Strategy", short: "Overview & Scoring", icon: "🧭", accent: "#70cff8",
       desc: "What IELTS is, how each paper is structured, every scoring criterion, the band scale, and exactly what 7.0 requires.",
       sections: [
@@ -28,7 +28,7 @@
       ],
     },
     {
-      id: "guide", file: "guide.html", num: "01.5", group: "Start here",
+      id: "guide", file: "guide.html", group: "Start here",
       title: "Learning Guidelines: Your Path to 7.0", short: "Learning Guidelines", icon: "🗺️", accent: "#d4af37",
       desc: "A step-by-step study path for each skill — what to learn, how to practise with the 10 tests, and when to move on.",
       sections: [
@@ -43,7 +43,7 @@
       ],
     },
     {
-      id: "listening", file: "listening.html", num: "02", group: "Four skills",
+      id: "listening", file: "listening.html", group: "Four skills",
       title: "Listening: 30/40 and Above", short: "Listening", icon: "🎧", accent: "#70cff8",
       desc: "Four parts, every question type, distractor traps, a dictation trainer and a full 40-question test with audio.",
       sections: [
@@ -56,7 +56,7 @@
       ],
     },
     {
-      id: "reading", file: "reading.html", num: "03", group: "Four skills",
+      id: "reading", file: "reading.html", group: "Four skills",
       title: "Reading: 30/40 and Above", short: "Reading", icon: "📖", accent: "#34d399",
       desc: "Time management, all question types, a TRUE/FALSE/NOT GIVEN trainer, paraphrase drills and a full timed test.",
       sections: [
@@ -70,7 +70,7 @@
       ],
     },
     {
-      id: "writing", file: "writing.html", num: "04", group: "Four skills",
+      id: "writing", file: "writing.html", group: "Four skills",
       title: "Writing: Task 1 & Task 2 at Band 7", short: "Writing", icon: "✍️", accent: "#d4af37",
       desc: "Academic Task 1 & Task 2: step-by-step methods for every visual and essay type, Band 7+ grammar, cohesion and vocabulary frameworks, model answers and a timed studio.",
       sections: [
@@ -89,7 +89,7 @@
       ],
     },
     {
-      id: "mockups", file: "mockups.html", num: "04.5", group: "Four skills",
+      id: "mockups", file: "mockups.html", group: "Four skills",
       title: "Writing Mockups: 40 Model Answers by Topic", short: "Writing Mockups", icon: "🧾", accent: "#d4af37",
       desc: "20 Academic Task 1 and 20 Task 2 questions with Band 8 model answers, organised by topic, with examiner-style notes and reusable language.",
       sections: [
@@ -98,7 +98,7 @@
       ],
     },
     {
-      id: "speaking", file: "speaking.html", num: "05", group: "Four skills",
+      id: "speaking", file: "speaking.html", group: "Four skills",
       title: "Speaking: Fluent, Natural Band 7", short: "Speaking", icon: "🎙️", accent: "#a78bfa",
       desc: "Step-by-step frameworks for every Part 1–3 question type, a 1-minute Part 2 planner, Band 7+ spoken language, pronunciation fixes and a record-yourself studio.",
       sections: [
@@ -117,7 +117,7 @@
       ],
     },
     {
-      id: "speaking-mockups", file: "speaking-mockups.html", num: "05.5", group: "Four skills",
+      id: "speaking-mockups", file: "speaking-mockups.html", group: "Four skills",
       title: "Speaking Mockups: Band 6.5–7 Answers about Vietnam", short: "Speaking Mockups", icon: "🗣️", accent: "#a78bfa",
       desc: "15 Part 1 topics and 15 cue cards with linked Part 3 discussions, each with a Band 6.5–7 model answer about life in Vietnam, read aloud, with record-yourself practice.",
       sections: [
@@ -128,7 +128,7 @@
       ],
     },
     {
-      id: "vocabulary", file: "vocabulary.html", num: "06", group: "Language toolkit",
+      id: "vocabulary", file: "vocabulary.html", group: "Language toolkit",
       title: "Vocabulary for Band 7", short: "Vocabulary", icon: "🧠", accent: "#fbbf24",
       desc: "Less common topic vocabulary, collocations, paraphrasing and spaced-repetition flashcards.",
       sections: [
@@ -141,7 +141,7 @@
       ],
     },
     {
-      id: "grammar", file: "grammar.html", num: "07", group: "Language toolkit",
+      id: "grammar", file: "grammar.html", group: "Language toolkit",
       title: "Grammar for Band 7", short: "Grammar", icon: "🧩", accent: "#f472b6",
       desc: "The complex structures examiners look for — and the accuracy that makes them count.",
       sections: [
@@ -157,7 +157,7 @@
       ],
     },
     {
-      id: "plan", file: "plan.html", num: "08", group: "Preparation",
+      id: "plan", file: "plan.html", group: "Preparation",
       title: "Study Plan & Test Preparation", short: "Study Plan & Tracker", icon: "🗓️", accent: "#f87171",
       desc: "A 12-week roadmap to 7.0 with saved checklists, a daily routine, a mock-test tracker and a test-day checklist.",
       sections: [
@@ -170,7 +170,7 @@
       ],
     },
     {
-      id: "practice", file: "practice.html", num: "09", group: "Practice",
+      id: "practice", file: "practice.html", group: "Practice",
       title: "Practice Tests: 10 Full IELTS Tests", short: "Practice Tests", icon: "📝", accent: "#fb923c",
       desc: "10 complete tests. Practise one skill at a time, or sit a full 4-skill test with timers and a final band report.",
       sections: [
@@ -180,7 +180,7 @@
       ],
     },
     {
-      id: "cambridge", file: "cambridge.html", num: "10", group: "Practice",
+      id: "cambridge", file: "cambridge.html", group: "Practice",
       title: "Cambridge IELTS Tests: Answer Sheets, Marking & Review", short: "Cambridge Tests", icon: "📚", accent: "#f472b6",
       desc: "Use your own Cambridge IELTS books (15–19 recommended): online answer sheets, timers, marking from the book's key, bands and a mistake-by-mistake review.",
       sections: [
@@ -191,6 +191,8 @@
       ],
     },
   ];
+  // Pages are numbered 1, 2, 3… in menu order; their sections are 1.1, 1.2… (see numberSections).
+  SITE.forEach((p, i) => (p.num = String(i + 1)));
 
   /* --------------------------------------------- Trusted references */
   const R = {
@@ -525,7 +527,7 @@
         if (cur && domSections.length) {
           html += `<ul class="sb-sections">` + domSections.map((s) => {
             const title = s.dataset.title || ($("h2", s) || {}).textContent || s.id;
-            return `<li><a href="#${s.id}" data-target="${s.id}">${esc(title)}</a></li>`;
+            return `<li><a href="#${s.id}" data-target="${s.id}">${s.dataset.num ? `<span class="sb-sub-num">${s.dataset.num}</span>` : ""}<span>${esc(title)}</span></a></li>`;
           }).join("") + `</ul>`;
         }
       });
@@ -583,6 +585,22 @@
       const head = $(".sec-head h2", s);
       if (head && !$(".anchor", head)) head.insertAdjacentHTML("beforeend", `<a class="anchor" href="#${s.id}" aria-label="Link to section">#</a>`);
     });
+  }
+
+  /** Number the page's sections as sub-items of the page (2.1, 2.2…), the same in the headings and the sidebar. */
+  function numberSections() {
+    if (!currentPage) return;
+    $$("section.doc-section[id]").forEach((s, i) => {
+      const n = `${currentPage.num}.${i + 1}`;
+      s.dataset.num = n;
+      const h = $(".sec-head h2", s);
+      if (!h) return;
+      let el = $(".sec-num", h);
+      if (!el) { el = document.createElement("span"); el.className = "sec-num"; h.prepend(el); }
+      el.textContent = n;
+    });
+    const eb = $(".page-hero .eyebrow");
+    if (eb) eb.textContent = eb.textContent.replace(/^Module [\d.]+/, `Module ${currentPage.num}`);
   }
 
   /* ------------------------------------------------- References */
@@ -762,6 +780,7 @@
     renderHeader();
     initTheme();
     renderReferences();
+    numberSections();
     renderSidebar();
     decorateSections();
     renderPager();

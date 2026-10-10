@@ -10,7 +10,7 @@
         "Overview: cycling rose in Aldwick and Corley but fell steadily in Brenton; Aldwick changed most, from second to by far the highest.",
         "Body 1: Brenton started highest (30,000) and declined gradually to 21,000.",
         "Body 2: Aldwick grew continuously, overtaking Brenton around 2013 and peaking at 46,000; Corley flat (~6,000) until 2010, tripled by 2015, then levelled off at 21,000 — equal to Brenton.",
-        "See the annotated model on the Writing page (section 4.4).",
+        "See the annotated Task 1 model answer on the Writing page.",
       ],
     },
     task2: {
