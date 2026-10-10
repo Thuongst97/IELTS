@@ -249,7 +249,9 @@
       const band = s.table ? rawToBand(raw, this.total, s.table) : null;
       const pct = Math.round((raw / this.total) * 100);
       const res = { raw, total: this.total, band, pct };
-      if (s.id && !opts.silent) {
+      // Don't record a result (or tick the module in the sidebar) when nothing was answered.
+      const answeredAny = this.answered() > 0;
+      if (s.id && !opts.silent && answeredAny) {
         saveResult(s.id, res);
         store.set("attempt:" + s.id, { answers: this.answers(), date: new Date().toISOString(), raw, total: this.total, band });
       }
@@ -258,6 +260,7 @@
       if (last) last.hidden = true;
       if (s.review && window.IELTS.Review) window.IELTS.Review.render(this.reviewHost, details, s.review);
       this.showResult(res, wrong, opts.silent);
+      if (!opts.silent && !answeredAny) $(".quiz-result h4", this.host).insertAdjacentHTML("afterend", `<p class="small muted" style="margin:0 0 6px">Nothing was answered, so this attempt was not saved to your results.</p>`);
       if (s.onCheck) s.onCheck(res);
       if (s.id) store.del("draft:" + s.id);
     }

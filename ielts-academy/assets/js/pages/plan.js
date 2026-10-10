@@ -139,18 +139,42 @@
 
   // Results from this site's quizzes
   const LABELS = { "listening:full": "Listening test (40)", "reading:full": "Reading test (40)", "reading:tfng": "TFNG trainer", "grammar:errors": "Grammar error quiz", "vocabulary:collocations": "Collocation quiz", "vocabulary:paraphrase": "Paraphrase quiz", "overview:sample": "Overview sample questions", "writing:cohesion": "Writing · cohesive devices quiz", "speaking:p3types": "Speaking · Part 3 question types" };
-  const res = getResults();
-  const keys = Object.keys(res);
-  $("#tr-site").innerHTML = keys.length
-    ? `<div class="table-wrap"><table class="t compact"><thead><tr><th>Practice</th><th class="num">Last score</th><th class="num">Best</th><th class="num">Est. band</th><th class="num">Attempts</th><th>Last attempt</th></tr></thead><tbody>${keys.map((k) => {
-        const r = res[k];
-        const m = k.match(/^practice:t(\d+):(\w+)$/);
-        const c = k.match(/^cambridge:b(\d+)t(\d+):(\w+)$/);
-        const cap = (x) => x[0].toUpperCase() + x.slice(1);
-        const label = LABELS[k] || (m ? `${+m[1] > 10 ? `Exam Test ${m[1] - 10}` : `Practice Test ${m[1]}`} · ${cap(m[2])}` : c ? `Cambridge ${c[1]} · Test ${c[2]} · ${cap(c[3])}` : k);
-        return `<tr><td>${esc(label)}</td><td class="num">${r.raw}/${r.total}</td><td class="num">${r.best}/${r.total}</td><td class="num">${r.band != null ? fmtBand(r.band) : "–"}</td><td class="num">${r.attempts || 1}</td><td>${esc(new Date(r.date).toLocaleDateString())}</td></tr>`;
-      }).join("")}</tbody></table></div>`
-    : `<p class="muted">No results yet — try the <a href="listening.html#practice">Listening</a> or <a href="reading.html#practice">Reading</a> test.</p>`;
+  function renderSite() {
+    const res = getResults();
+    const keys = Object.keys(res);
+    $("#tr-site").innerHTML = keys.length
+      ? `<div class="table-wrap"><table class="t compact"><thead><tr><th>Practice</th><th class="num">Last score</th><th class="num">Best</th><th class="num">Est. band</th><th class="num">Attempts</th><th>Last attempt</th><th></th></tr></thead><tbody>${keys.map((k) => {
+          const r = res[k];
+          const m = k.match(/^practice:t(\d+):(\w+)$/);
+          const c = k.match(/^cambridge:b(\d+)t(\d+):(\w+)$/);
+          const cap = (x) => x[0].toUpperCase() + x.slice(1);
+          const label = LABELS[k] || (m ? `${+m[1] > 10 ? `Exam Test ${m[1] - 10}` : `Practice Test ${m[1]}`} · ${cap(m[2])}` : c ? `Cambridge ${c[1]} · Test ${c[2]} · ${cap(c[3])}` : k);
+          return `<tr><td>${esc(label)}</td><td class="num">${r.raw}/${r.total}</td><td class="num">${r.best}/${r.total}</td><td class="num">${r.band != null ? fmtBand(r.band) : "–"}</td><td class="num">${r.attempts || 1}</td><td>${esc(new Date(r.date).toLocaleDateString())}</td><td><button class="btn sm ghost" type="button" data-del="${esc(k)}" title="Remove this result">✕ Remove</button></td></tr>`;
+        }).join("")}</tbody></table></div>
+        <div class="row"><button class="btn sm ghost danger" type="button" data-del-all>🗑 Clear all practice results</button><span class="small muted">Removing a result also removes the ✅ next to that module in the sidebar.</span></div>`
+      : `<p class="muted">No results yet. Try the <a href="listening.html#practice">Listening</a> or <a href="reading.html#practice">Reading</a> test.</p>`;
+  }
+  /** Keep the sidebar ✅ in step with the remaining results. */
+  function syncSidebarTicks() {
+    const res = getResults();
+    $$(".sb-page").forEach((a) => {
+      const id = (window.IELTS.SITE.find((p) => a.getAttribute("href") === p.file) || {}).id;
+      const ico = $(".sb-ico", a);
+      if (ico && id && !Object.keys(res).some((k) => k.startsWith(id + ":"))) ico.remove();
+    });
+  }
+  $("#tr-site").addEventListener("click", (e) => {
+    const one = e.target.closest("[data-del]"), all = e.target.closest("[data-del-all]");
+    if (!one && !all) return;
+    const res = getResults();
+    const keys = all ? Object.keys(res) : [one.dataset.del];
+    if (all && !confirm("Clear all practice results? Saved answers for review will also be removed. This cannot be undone.")) return;
+    keys.forEach((k) => { delete res[k]; store.del("attempt:" + k); });
+    store.set("results", res);
+    renderSite();
+    syncSidebarTicks();
+  });
+  renderSite();
 
   /* ================================================== Checklists */
   const LISTS = {
