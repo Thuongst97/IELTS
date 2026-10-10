@@ -138,7 +138,7 @@
   renderTracker();
 
   // Results from this site's quizzes
-  const LABELS = { "listening:full": "Listening test (40)", "reading:full": "Reading test (40)", "reading:tfng": "TFNG trainer", "grammar:errors": "Grammar error quiz", "vocabulary:collocations": "Collocation quiz", "vocabulary:paraphrase": "Paraphrase quiz", "overview:sample": "Overview sample questions" };
+  const LABELS = { "listening:full": "Listening test (40)", "reading:full": "Reading test (40)", "reading:tfng": "TFNG trainer", "grammar:errors": "Grammar error quiz", "vocabulary:collocations": "Collocation quiz", "vocabulary:paraphrase": "Paraphrase quiz", "overview:sample": "Overview sample questions", "writing:cohesion": "Writing · cohesive devices quiz", "speaking:p3types": "Speaking · Part 3 question types" };
   const res = getResults();
   const keys = Object.keys(res);
   $("#tr-site").innerHTML = keys.length

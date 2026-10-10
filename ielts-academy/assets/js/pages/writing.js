@@ -26,10 +26,6 @@
       prompt: "The graph below shows the average number of daily journeys made by bicycle in three cities between 2000 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words." },
     { id: "t1-bar", label: "Task 1 (Academic) · Bar chart — exercise by age", min: 150, minutes: 20, chart: "bar",
       prompt: "The bar chart below shows the percentage of adults in one city who exercised at least twice a week, by age group, in 2005 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words." },
-    { id: "t1-letter", label: "Task 1 (General) · Letter — noisy neighbours", min: 150, minutes: 20,
-      prompt: "Your new neighbours have been making a lot of noise late at night. Write a letter to your neighbours. In your letter: • introduce yourself • explain the problem and how it is affecting you • suggest a solution. Begin your letter: Dear …" },
-    { id: "t1-letter2", label: "Task 1 (General) · Letter — course enquiry", min: 150, minutes: 20,
-      prompt: "You want to take an evening course at a local college. Write a letter to the college. In your letter: • say which course you are interested in and why • ask for information about the course • explain any special requirements you have. Begin your letter: Dear Sir or Madam," },
   ];
   const T2 = [
     ["Opinion", "Some people believe that university education should be free for all students. To what extent do you agree or disagree?"],
@@ -65,7 +61,7 @@
   let task = null, saveT = null;
 
   function loadTask(id) {
-    task = TASKS.find((t) => t.id === id) || TASKS[4];
+    task = TASKS.find((t) => t.id === id) || TASKS.find((t) => t.id === "t2-0");
     sel.value = task.id;
     promptEl.innerHTML = `<b>${task.id.startsWith("t1") ? "Task 1" : "Task 2"}.</b> ${esc(task.prompt).replace(/ • /g, "<br>• ")}`;
     chartEl.innerHTML = task.chart ? `<div class="chart-wrap" style="margin-bottom:12px">${task.chart === "line" ? lineChart(LINE) : barChart(BAR)}</div>` : "";
