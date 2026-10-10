@@ -89,6 +89,15 @@
       ],
     },
     {
+      id: "mockups", file: "mockups.html", num: "04.5", group: "Four skills",
+      title: "Writing Mockups: 40 Model Answers by Topic", short: "Writing Mockups", icon: "🧾", accent: "#d4af37",
+      desc: "20 Academic Task 1 and 20 Task 2 questions with Band 8 model answers, organised by topic, with examiner-style notes and reusable language.",
+      sections: [
+        ["browse", "Browse by topic", "mockups model answers sample essays task 1 task 2 topics education technology environment health work society cities crime media culture energy transport population tourism"],
+        ["how", "How to study a model answer", "how to study model answers memorise plan compare"],
+      ],
+    },
+    {
       id: "speaking", file: "speaking.html", num: "05", group: "Four skills",
       title: "Speaking: Fluent, Natural Band 7", short: "Speaking", icon: "🎙️", accent: "#a78bfa",
       desc: "Step-by-step frameworks for every Part 1–3 question type, a 1-minute Part 2 planner, Band 7+ spoken language, pronunciation fixes and a record-yourself studio.",
@@ -384,7 +393,7 @@
             <button aria-haspopup="true">Modules ▾</button>
             <div class="nav-drop-menu">${modLinks}</div>
           </div>
-          ${nav("overview", "Overview")}${nav("guide", "Guide")}${nav("listening", "Listening")}${nav("reading", "Reading")}${nav("writing", "Writing")}${nav("speaking", "Speaking")}${nav("practice", "Practice", ["cambridge"])}${nav("plan", "Plan")}
+          ${nav("overview", "Overview")}${nav("guide", "Guide")}${nav("listening", "Listening")}${nav("reading", "Reading")}${nav("writing", "Writing", ["mockups"])}${nav("speaking", "Speaking")}${nav("practice", "Practice", ["cambridge"])}${nav("plan", "Plan")}
         </nav>
         <div class="header-spacer"></div>
         <div class="global-search" role="search">
