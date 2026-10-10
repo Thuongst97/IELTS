@@ -147,7 +147,7 @@
         const m = k.match(/^practice:t(\d+):(\w+)$/);
         const c = k.match(/^cambridge:b(\d+)t(\d+):(\w+)$/);
         const cap = (x) => x[0].toUpperCase() + x.slice(1);
-        const label = LABELS[k] || (m ? `Practice Test ${m[1]} · ${cap(m[2])}` : c ? `Cambridge ${c[1]} · Test ${c[2]} · ${cap(c[3])}` : k);
+        const label = LABELS[k] || (m ? `${+m[1] > 10 ? `Exam Test ${m[1] - 10}` : `Practice Test ${m[1]}`} · ${cap(m[2])}` : c ? `Cambridge ${c[1]} · Test ${c[2]} · ${cap(c[3])}` : k);
         return `<tr><td>${esc(label)}</td><td class="num">${r.raw}/${r.total}</td><td class="num">${r.best}/${r.total}</td><td class="num">${r.band != null ? fmtBand(r.band) : "–"}</td><td class="num">${r.attempts || 1}</td><td>${esc(new Date(r.date).toLocaleDateString())}</td></tr>`;
       }).join("")}</tbody></table></div>`
     : `<p class="muted">No results yet — try the <a href="listening.html#practice">Listening</a> or <a href="reading.html#practice">Reading</a> test.</p>`;

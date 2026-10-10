@@ -14,10 +14,22 @@
   };
   const ORDER = ["listening", "reading", "writing", "speaking"];
 
+  /* ================================================== Series
+     Academy tests are numbered 1–10; full-length Exam Tests use 11, 12, … internally
+     (data key "x1", "x2", …), so scores, drafts and links keep a single number. */
+  const EXAM_INDEX = window.IELTS_EXAM_INDEX || [];
+  const isExam = (n) => n > 10;
+  const label = (n) => (isExam(n) ? `Exam Test ${n - 10}` : `Test ${n}`);
+  const SERIES = { academy: { first: 1, last: 10 }, exam: { first: 11, last: 10 + EXAM_INDEX.length } };
+  const seriesOf = (n) => (isExam(n) ? "exam" : "academy");
+  const meta = (n) => (isExam(n) ? EXAM_INDEX[n - 11] : INDEX[n - 1]) || {};
+  const ready = (n, k) => { const r = meta(n).ready; return !r || r.includes(k); };
+  const readyAll = (n) => ORDER.every((k) => ready(n, k));
+
   /* ================================================== Loading */
   const VERSION = ((document.querySelector('script[src*="core.js"]') || {}).src || "").split("v=")[1] || "";
   const pad = (n) => String(n).padStart(2, "0");
-  const files = (n) => (n === 1 ? ["data/listening-test.js", "data/reading-test.js", "data/tests/test-01.js"] : [`data/tests/test-${pad(n)}.js`]);
+  const files = (n) => (isExam(n) ? [`data/tests/exam-${pad(n - 10)}.js`] : n === 1 ? ["data/listening-test.js", "data/reading-test.js", "data/tests/test-01.js"] : [`data/tests/test-${pad(n)}.js`]);
   const loaded = {};
   const loadScript = (src) => new Promise((resolve, reject) => {
     if (loaded[src]) return resolve();
@@ -29,8 +41,8 @@
   });
   async function loadTest(n) {
     for (const f of files(n)) await loadScript(f);
-    const t = (window.IELTS_TESTS || {})[n];
-    if (!t) throw new Error(`Test ${n} is not available.`);
+    const t = (window.IELTS_TESTS || {})[isExam(n) ? "x" + (n - 10) : n];
+    if (!t) throw new Error(`${label(n)} is not available.`);
     return t;
   }
 
@@ -45,19 +57,22 @@
 
   /* ================================================== Picker */
   const pick = store.get("practice-pick", { mode: "skill", skill: "listening", test: 1 });
+  pick.series = seriesOf(pick.test);
   const grid = $("#test-grid");
   function renderGrid() {
-    grid.innerHTML = Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
-      const m = INDEX[n - 1] || {}, sc = scoresFor(n);
+    const { first, last } = SERIES[pick.series];
+    grid.innerHTML = Array.from({ length: last - first + 1 }, (_, i) => first + i).map((n) => {
+      const m = meta(n), sc = scoresFor(n);
       const chip = (k) => {
         const v = sc[k];
+        if (!ready(n, k)) return `<span class="soon" title="${SK[k].name}: coming soon">${SK[k].short} soon</span>`;
         if (v == null) return `<span>${SK[k].short} –</span>`;
         const band = typeof v === "object" ? v.band : v;
         const label = typeof v === "object" ? `${v.best}/40` : fmtBand(v);
         return `<span class="${band >= 7 ? "ok" : "low"}" title="${SK[k].name}: band ${fmtBand(band)}">${SK[k].short} ${label}</span>`;
       };
       return `<button type="button" class="test-card ${pick.test === n ? "sel" : ""}" data-n="${n}">
-        <b>Test ${n}</b>
+        <b>${label(n)}</b>
         <span class="tc-topics">${esc(m.topics || "")}</span>
         <span class="tc-scores">${ORDER.map(chip).join("")}${sc.full ? `<span class="${sc.full.band >= 7 ? "ok" : "low"}">Full ${fmtBand(sc.full.band)}</span>` : ""}</span>
       </button>`;
@@ -68,15 +83,26 @@
     $$("#skill-pick button").forEach((b) => b.classList.toggle("sel", b.dataset.skill === pick.skill));
     $("#skill-step").classList.toggle("off", pick.mode === "full");
     $$(".test-card", grid).forEach((c) => c.classList.toggle("sel", +c.dataset.n === pick.test));
-    $("#start-summary").innerHTML = pick.mode === "full"
-      ? `<b>Test ${pick.test} · Full test</b> — Listening → Reading → Writing → Speaking, then your overall band.`
-      : `<b>Test ${pick.test} · ${SK[pick.skill].icon} ${SK[pick.skill].name}</b>`;
-    $("#start-btn").textContent = pick.mode === "full" ? `Start full Test ${pick.test} →` : `Start ${SK[pick.skill].name} · Test ${pick.test} →`;
+    $$("#series-pick button").forEach((b) => b.classList.toggle("sel", b.dataset.series === pick.series));
+    const L = label(pick.test);
+    const ok = pick.mode === "full" ? readyAll(pick.test) : ready(pick.test, pick.skill);
+    $("#start-summary").innerHTML = (pick.mode === "full"
+      ? `<b>${L} · Full test</b> — Listening → Reading → Writing → Speaking, then your overall band.`
+      : `<b>${L} · ${SK[pick.skill].icon} ${SK[pick.skill].name}</b>`) + (ok ? "" : ` <span class="c-amber">· this paper is coming soon</span>`);
+    const btn = $("#start-btn");
+    btn.disabled = !ok;
+    btn.textContent = pick.mode === "full" ? `Start full ${L} →` : `Start ${SK[pick.skill].name} · ${L} →`;
     store.set("practice-pick", pick);
   }
   $("#mode-pick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { pick.mode = b.dataset.mode; paintPick(); } });
   $("#skill-pick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { pick.skill = b.dataset.skill; pick.mode = "skill"; paintPick(); } });
   grid.addEventListener("click", (e) => { const b = e.target.closest(".test-card"); if (b) { pick.test = +b.dataset.n; paintPick(); } });
+  const seriesPick = $("#series-pick");
+  if (seriesPick) seriesPick.addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b || b.dataset.series === pick.series) return;
+    pick.series = b.dataset.series; pick.test = SERIES[pick.series].first;
+    renderGrid(); paintPick();
+  });
   $("#start-btn").addEventListener("click", () => start(pick.test, pick.mode === "full" ? "full" : pick.skill));
 
   /* ================================================== Session */
@@ -88,7 +114,7 @@
     history.replaceState(null, "", `#t=${n}&s=${what}`);
     $("#runner-empty").hidden = true;
     $("#runner-wrap").hidden = false;
-    body.innerHTML = `<p class="muted">Loading Test ${n}…</p>`;
+    body.innerHTML = `<p class="muted">Loading ${label(n)}…</p>`;
     foot.innerHTML = "";
     $("#runner").scrollIntoView({ behavior: "smooth", block: "start" });
     let T;
@@ -109,7 +135,7 @@
     current = null;
     const { n, T, full, steps, i } = session;
     const step = steps[i];
-    $("#rh-eyebrow").textContent = `Test ${n} · ${full ? "Full test (4 skills)" : "Single skill"}`;
+    $("#rh-eyebrow").textContent = `${label(n)} · ${full ? "Full test (4 skills)" : "Single skill"}${isExam(n) ? " · full length" : ""}`;
     $("#rh-title").textContent = step === "result" ? "🏁 Your band report" : `${SK[step].icon} ${SK[step].name}`;
     const stepper = $("#stepper");
     stepper.hidden = !full;
@@ -118,8 +144,9 @@
     const host = document.createElement("div");
     body.appendChild(host);
     const id = (k) => `practice:t${n}:${k}`;
-    if (step === "listening") current = window.IELTS.ListeningRunner(host, T.listening, { id: id("listening"), title: `Test ${n} · Listening · 40 questions`, onCheck: (r) => { session.res.listening = r; renderGrid(); } });
-    else if (step === "reading") current = window.IELTS.ReadingRunner(host, T.reading, { id: id("reading"), title: `Test ${n} · Reading · 40 questions`, onCheck: (r) => { session.res.reading = r; renderGrid(); } });
+    if (step !== "result" && !T[step]) host.innerHTML = `<div class="callout note"><div class="ci">🛠️</div><div><span class="ct">Coming soon</span><p>The ${SK[step].name} paper for ${label(n)} is still being prepared. Try another paper of this test, or another test.</p></div></div>`;
+    else if (step === "listening") current = window.IELTS.ListeningRunner(host, T.listening, { id: id("listening"), title: `${label(n)} · Listening · 40 questions`, onCheck: (r) => { session.res.listening = r; renderGrid(); } });
+    else if (step === "reading") current = window.IELTS.ReadingRunner(host, T.reading, { id: id("reading"), title: `${label(n)} · Reading · 40 questions`, onCheck: (r) => { session.res.reading = r; renderGrid(); } });
     else if (step === "writing") current = runWriting(host, T.writing, n);
     else if (step === "speaking") current = runSpeaking(host, T.speaking, n);
     else current = runResult(host);
@@ -140,8 +167,9 @@
       });
       foot.appendChild(btn);
     } else if (!full) {
+      const nextN = session.n + 1, hasNext = nextN <= SERIES[seriesOf(session.n)].last && ready(nextN, step);
       foot.innerHTML = `<a class="btn ghost" href="#choose">↑ Choose another test</a>` +
-        (session.n < 10 ? `<button class="btn" type="button" data-next>Next: Test ${session.n + 1} · ${SK[step].name} →</button>` : "");
+        (hasNext ? `<button class="btn" type="button" data-next>Next: ${label(nextN)} · ${SK[step].name} →</button>` : "");
       const nx = $("[data-next]", foot);
       if (nx) nx.addEventListener("click", () => { pick.test = session.n + 1; paintPick(); start(session.n + 1, step); });
     }
@@ -168,7 +196,7 @@
   function runSpeaking(host, S, n) {
     const s = self()["t" + n] || {};
     return window.IELTS.SpeakingRoom(host, S, {
-      name: `test${n}-speaking`, label: `Test ${n} speaking`,
+      name: `${label(n).toLowerCase().replace(/\s+/g, "-")}-speaking`, label: `${label(n)} speaking`,
       saved: { band: s.speaking, crit: s.scrit },
       onScore: (band, crit) => { setSelf(n, { speaking: band, scrit: crit }); renderGrid(); },
     });
@@ -202,12 +230,12 @@
         <a class="btn ghost" href="plan.html#tracker">Open tracker</a>
         ${res.listening ? `<button class="btn ghost" type="button" data-review="listening">📋 Listening answers &amp; explanations</button>` : ""}
         ${res.reading ? `<button class="btn ghost" type="button" data-review="reading">📋 Reading answers &amp; explanations</button>` : ""}
-        ${n < 10 ? `<button class="btn primary" type="button" id="next-full">Next: full Test ${n + 1} →</button>` : ""}
+        ${n + 1 <= SERIES[seriesOf(n)].last && readyAll(n + 1) ? `<button class="btn primary" type="button" id="next-full">Next: full ${label(n + 1)} →</button>` : ""}
       </div>`;
     const t = $("#to-tracker", host);
     if (t) t.addEventListener("click", () => {
       const mocks = store.get("mocks", []);
-      mocks.push({ date: new Date().toISOString().slice(0, 10), l: res.listening ? res.listening.raw : "", r: res.reading ? res.reading.raw : "", w: W, s: Sp, note: `Practice Test ${n}` });
+      mocks.push({ date: new Date().toISOString().slice(0, 10), l: res.listening ? res.listening.raw : "", r: res.reading ? res.reading.raw : "", w: W, s: Sp, note: isExam(n) ? label(n) : `Practice Test ${n}` });
       store.set("mocks", mocks);
       t.disabled = true; t.textContent = "✓ Saved to tracker";
     });
@@ -222,9 +250,10 @@
   paintPick();
   function route() {
     const m = location.hash.match(/t=(\d+)&s=(\w+)/);
-    if (!m || +m[1] < 1 || +m[1] > 10 || !(m[2] === "full" || SK[m[2]])) return;
+    if (!m || +m[1] < 1 || +m[1] > SERIES.exam.last || !(m[2] === "full" || SK[m[2]])) return;
     if (session && session.n === +m[1] && (session.full ? "full" : session.steps[0]) === m[2]) return;
-    pick.test = +m[1];
+    pick.test = +m[1]; pick.series = seriesOf(pick.test);
+    renderGrid();
     if (m[2] === "full") pick.mode = "full"; else { pick.mode = "skill"; pick.skill = m[2]; }
     paintPick();
     start(+m[1], m[2]);

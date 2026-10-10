@@ -1042,3 +1042,11 @@ abbr[data-tip], span[data-tip] { border-bottom: 1px dotted var(--faint); }
 .p2-route { margin-top: 10px; color: var(--text-2); }
 @media (max-width: 1100px) { .ladder, .p2-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .route { flex-wrap: wrap; } .route > div { flex: 1 1 140px; } }
 @media (max-width: 640px) { .method-grid, .pl-grid, #upgrade-drill, .p2-top, .pl-custom { grid-template-columns: minmax(0, 1fr); } .ladder, .p2-grid { grid-template-columns: minmax(0, 1fr); } .steps > li { padding-left: 52px; } }
+/* Practice series switch */
+.series-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.series-pick button { text-align: left; font: inherit; cursor: pointer; padding: 10px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+.series-pick button small { display: block; color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+.series-pick button:hover { border-color: var(--blue); }
+.series-pick button.sel { border-color: var(--gold); background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), var(--surface)); }
+.test-card .tc-scores span.soon { opacity: 0.6; font-style: italic; }
+@media (max-width: 640px) { .series-pick { grid-template-columns: minmax(0, 1fr); } }

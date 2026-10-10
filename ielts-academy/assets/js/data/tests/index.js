@@ -18,6 +18,11 @@ window.IELTS_TEST_INDEX = [
   { topics: "L: evening classes · science museum · work placement · timekeeping — R: maps · microplastics · creativity & constraints" },
 ];
 
+/** Full-length Exam Tests (data in exam-NN.js). "ready" lists the papers that are available. */
+window.IELTS_EXAM_INDEX = [
+  { topics: "L: volunteer weekend · Hollins Park map · food-waste report · biomimicry", ready: ["listening", "writing", "speaking"] },
+];
+
 /** Builders: keep the test files short and consistent. */
 window.TB = (function () {
   const L = "ABCDEFGHIJ";
@@ -31,6 +36,7 @@ window.TB = (function () {
     sel: (n, text, answer, why, options) => ({ n, type: "select", text, answer, why, options }),
     box: (items, title) => ({ title, items: items.map((t, i) => (Array.isArray(t) ? t : [L[i], t])) }),
     roman: (items, title) => ({ title, items: items.map((t, i) => [["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi"][i], t]) }),
-    part: (id, title, scene, speakers, lines) => ({ id, title, scene, speakers, lines }),
+    // opts (exam tests): { split: [line text or index, "1 to 7", "8 to 10"], check: true } adds the real test's mid-part and checking pauses
+    part: (id, title, scene, speakers, lines, opts) => ({ id, title, scene, speakers, lines, ...(opts || {}) }),
   };
 })();

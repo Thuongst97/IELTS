@@ -127,11 +127,21 @@
       const out = [];
       parts.forEach((p) => {
         if (exam.checked) {
-          out.push({ say: `Part ${p.id}. ${p.scene} First, you have thirty seconds to look at questions ${RANGES[p.id]}.`, speaker: 3, part: p.id });
+          out.push({ say: `Part ${p.id}. ${p.scene} First, you have thirty seconds to look at questions ${p.split ? p.split[1] : RANGES[p.id]}.`, speaker: 3, part: p.id });
           out.push({ wait: 30, part: p.id });
         }
-        p.lines.forEach((ln, li) => sentences(ln[1]).forEach((s) => out.push({ say: s, speaker: ln[0] + (p.id - 1), who: p.speakers[ln[0]], part: p.id, line: li })));
-        if (exam.checked) out.push({ say: `That is the end of part ${p.id}.`, speaker: 3, part: p.id });
+        p.lines.forEach((ln, li) => {
+          // Exam tests pause halfway, as the real recordings do, so the next questions can be read.
+          if (exam.checked && p.split && (p.split[0] === li || p.split[0] === ln[1])) {
+            out.push({ say: `Before you hear the rest, you have some time to look at questions ${p.split[2]}.`, speaker: 3, part: p.id });
+            out.push({ wait: 30, part: p.id });
+          }
+          sentences(ln[1]).forEach((s) => out.push({ say: s, speaker: ln[0] + (p.id - 1), who: p.speakers[ln[0]], part: p.id, line: li }));
+        });
+        if (exam.checked) {
+          out.push({ say: `That is the end of part ${p.id}.${p.check ? " You now have thirty seconds to check your answers." : ""}`, speaker: 3, part: p.id });
+          if (p.check) out.push({ wait: 30, part: p.id });
+        }
       });
       return out;
     }
