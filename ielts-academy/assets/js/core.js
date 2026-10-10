@@ -191,8 +191,8 @@
       ],
     },
   ];
-  // Pages are numbered 1, 2, 3… in menu order; their sections are 1.1, 1.2… (see numberSections).
-  SITE.forEach((p, i) => (p.num = String(i + 1)));
+  // Pages are numbered 01, 02, 03… in menu order; their sections are 1.1, 1.2… (see numberSections).
+  SITE.forEach((p, i) => { p.n = i + 1; p.num = String(i + 1).padStart(2, "0"); });
 
   /* --------------------------------------------- Trusted references */
   const R = {
@@ -591,7 +591,7 @@
   function numberSections() {
     if (!currentPage) return;
     $$("section.doc-section[id]").forEach((s, i) => {
-      const n = `${currentPage.num}.${i + 1}`;
+      const n = `${currentPage.n}.${i + 1}`;
       s.dataset.num = n;
       const h = $(".sec-head h2", s);
       if (!h) return;
