@@ -1091,3 +1091,36 @@ abbr[data-tip], span[data-tip] { border-bottom: 1px dotted var(--faint); }
 .mk-maplabel { fill: var(--text); font: 650 10px var(--font); }
 @media (max-width: 900px) { .mk-layout { grid-template-columns: minmax(0, 1fr); } .mk-side { position: static; max-height: none; } }
 @media (max-width: 640px) { .mk-set, .mk-maps { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===================================================== Speaking mockups */
+.smk-tools { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 10px 14px; margin-bottom: 12px; border-radius: 12px; }
+.smk-bar { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin: 4px 0 10px; }
+.smk-bar .spacer, .smk-a-foot .spacer { flex: 1; }
+.smk-rec { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 10px 0 6px; }
+.smk-recs:empty { display: none; }
+.smk-qas { display: flex; flex-direction: column; gap: 12px; margin: 8px 0 4px; }
+.smk-qa { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+.smk-q { display: flex; gap: 10px; align-items: flex-start; font-weight: 650; color: var(--text); line-height: 1.45; }
+.smk-n { flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--purple-dim); color: var(--purple-text); font: 700 0.75rem var(--mono); margin-top: 1px; }
+.smk-qt { flex: 1; min-width: 0; }
+.smk-a { margin: 8px 0 0 34px; padding: 10px 14px; border-left: 3px solid var(--purple); background: var(--paper); border-radius: 0 10px 10px 0; }
+.smk-a p { margin: 0; font-family: var(--serif); font-size: 1rem; line-height: 1.75; color: var(--text); }
+.smk-a-foot { display: flex; align-items: center; gap: 10px; justify-content: space-between; margin-top: 8px; }
+.smk-reveal { margin: 8px 0 0 34px; }
+.smk-speaking { outline: 2px solid var(--purple); outline-offset: 2px; border-radius: 8px; }
+.smk-play.on { border-color: var(--red); color: var(--red); }
+.smk-p2 { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 14px; align-items: start; margin-bottom: 14px; }
+.smk-p2 .cue-card .eyebrow { margin-bottom: 6px; }
+.smk-try textarea { width: 100%; resize: vertical; margin-top: 10px; }
+.smk-clock { font: 700 1.4rem var(--mono); min-width: 70px; color: var(--text); }
+.smk-clock[data-phase="plan"] { color: var(--amber); }
+.smk-clock[data-phase="talk"] { color: var(--green); }
+.smk-p2-model { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.smk-plan ul { columns: 2; column-gap: 28px; margin: 0; }
+.smk-plan li { break-inside: avoid; margin: 0 0 4px; }
+.smk-model p { margin-bottom: 0.9rem; }
+.smk-p3 { margin-top: 22px; padding-top: 16px; border-top: 1px dashed var(--border-hi); }
+.smk-gloss { margin: 6px 0 0; padding-left: 18px; }
+.smk-gloss li { margin: 3px 0; }
+@media (max-width: 1100px) { .smk-p2, .smk-p2-model { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) { .smk-a, .smk-reveal { margin-left: 0; } .smk-plan ul { columns: 1; } }

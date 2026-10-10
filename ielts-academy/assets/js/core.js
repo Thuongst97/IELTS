@@ -117,6 +117,17 @@
       ],
     },
     {
+      id: "speaking-mockups", file: "speaking-mockups.html", num: "05.5", group: "Four skills",
+      title: "Speaking Mockups: Band 6.5–7 Answers about Vietnam", short: "Speaking Mockups", icon: "🗣️", accent: "#a78bfa",
+      desc: "15 Part 1 topics and 15 cue cards with linked Part 3 discussions, each with a Band 6.5–7 model answer about life in Vietnam, read aloud, with record-yourself practice.",
+      sections: [
+        ["browse", "Browse by topic", "speaking mockups model answers sample part 1 part 2 part 3 cue card vietnam hometown food tet festival motorbike family teacher tourism weather"],
+        ["level", "What Band 6.5–7 sounds like", "band 7 band 6.5 criteria fluency vocabulary grammar pronunciation"],
+        ["vietnam", "Talking about Vietnam in English", "vietnam explain vietnamese words culture mistakes errors vietnamese speakers"],
+        ["how", "How to practise with a model answer", "practise record compare memorise"],
+      ],
+    },
+    {
       id: "vocabulary", file: "vocabulary.html", num: "06", group: "Language toolkit",
       title: "Vocabulary for Band 7", short: "Vocabulary", icon: "🧠", accent: "#fbbf24",
       desc: "Less common topic vocabulary, collocations, paraphrasing and spaced-repetition flashcards.",
@@ -392,7 +403,7 @@
             <button aria-haspopup="true">Modules ▾</button>
             <div class="nav-drop-menu">${modLinks}</div>
           </div>
-          ${nav("overview", "Overview")}${nav("guide", "Guide")}${nav("listening", "Listening")}${nav("reading", "Reading")}${nav("writing", "Writing", ["mockups"])}${nav("speaking", "Speaking")}${nav("practice", "Practice", ["cambridge"])}${nav("plan", "Plan")}
+          ${nav("overview", "Overview")}${nav("guide", "Guide")}${nav("listening", "Listening")}${nav("reading", "Reading")}${nav("writing", "Writing", ["mockups"])}${nav("speaking", "Speaking", ["speaking-mockups"])}${nav("practice", "Practice", ["cambridge"])}${nav("plan", "Plan")}
         </nav>
         <div class="header-spacer"></div>
         <div class="global-search" role="search">
@@ -508,7 +519,8 @@
       html += `<div class="sb-group"><div class="sb-group-title">${esc(g)}</div>`;
       pages.forEach((p) => {
         const cur = p.id === pageId;
-        const done = Object.keys(results).some((k) => k.startsWith(p.id + ":"));
+        // Speaking has no scored tests, so it never shows a ✅.
+        const done = p.id !== "speaking" && Object.keys(results).some((k) => k.startsWith(p.id + ":"));
         html += `<a class="sb-page ${cur ? "current" : ""}" href="${p.file}" data-hay="${esc(norm(p.title + " " + p.desc + " " + p.sections.map((s) => s[1] + " " + s[2]).join(" ")))}"><span class="sb-num">${p.num}</span>${esc(p.short)}${done ? `<span class="sb-ico" title="You have practice results here">✅</span>` : ""}</a>`;
         if (cur && domSections.length) {
           html += `<ul class="sb-sections">` + domSections.map((s) => {

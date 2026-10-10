@@ -15,6 +15,7 @@ plain HTML/CSS/JS, no build step, a shared `core.js` runtime (header, sidebar, s
 | 04 | `writing.html` | **Academic Writing.** Band 6/7/8 descriptors; Task 1 step-by-step method for every visual (line, bar, pie, table, two visuals, process, map); Task 2 routine (decode → position → brainstorm lenses → idea ladder → outline) with a plan for each of 7 essay types and an interactive plan builder; Band 7+ frameworks (15 advanced structures, cohesive devices incl. reference & substitution, vocabulary templates, topic collocations) with a cohesion quiz and a sentence-upgrade drill; annotated Band 8 models, upgrades, common errors, timed studio |
 | 04.5 | `mockups.html` | **Writing Mockups**: 20 Academic Task 1 questions (10 topics, line/bar/pie/table/process/map/two visuals) and 20 Task 2 questions (10 topics, every essay type), each with a Band 8 model answer, examiner-style notes and reusable language; browse by topic and type, optional timed attempt before reading the model. Deep links: `mockups.html#t1-05`, `#t2-12` |
 | 05 | `speaking.html` | Criteria; step-by-step frameworks for every Part 1 question type, the Part 2 one-minute plan (note grid, 2-minute route, plans for 7 cue-card types, interactive planner) and every Part 3 question type (with a question-type drill); Band 7+ spoken structures, discourse markers and vocabulary upgrades; sample answers, pronunciation for Vietnamese speakers, speaking studio, question bank |
+| 05.5 | `speaking-mockups.html` | **Speaking Mockups**: 15 Part 1 topics (4 questions each) and 15 Part 2 cue cards (3 each of person, place, object, event, experience) with 1-minute notes and a linked 3-question Part 3 discussion, all with Band 6.5–7 model answers about life in Vietnam, examiner-style notes, reusable language and Vietnamese words explained. Browser voice reads questions and answers; record-yourself practice; Part 2 plan/talk timer; hide answers until you've tried. Deep links: `speaking-mockups.html#p1-03`, `#p2-10` |
 | 06 | `vocabulary.html` | 120 topic words with collocations, examples and Vietnamese meanings, collocation/paraphrase quizzes, spaced-repetition flashcards, linking words |
 | 07 | `grammar.html` | Complex sentences, tenses, conditionals, clauses, passive, articles, punctuation, error-correction quiz |
 | 08 | `plan.html` | Gap diagnosis, 12-week roadmap with saved checklists, daily routine, mock-test tracker with chart, test-day checklist, resources |
@@ -52,7 +53,8 @@ ielts-academy/
   assets/js/rooms.js         shared Writing and Speaking test rooms (practice tests + Cambridge companion)
   assets/js/data/tests/exam-NN.js   full-length Exam Tests (checked by tools/check-tests.js)
   assets/js/data/mockups-t1.js / mockups-t2.js   Writing Mockups (checked by tools/check-mockups.js)
-  tools/                     node tools/check-tests.js · node tools/check-mockups.js (answer and data verification)
+  assets/js/data/speaking-mockups-*.js            Speaking Mockups (checked by tools/check-speaking-mockups.js)
+  tools/                     node tools/check-tests.js · node tools/check-mockups.js · node tools/check-speaking-mockups.js (answer and data verification)
   assets/js/data/*.js        module tests, vocabulary, speaking bank
   assets/js/data/tests/      practice tests: index.js (picker + builders) and test-01.js … test-10.js (loaded on demand)
   assets/js/pages/*.js       page-specific behaviour
