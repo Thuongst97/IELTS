@@ -21,6 +21,10 @@ window.IELTS_TEST_INDEX = [
 /** Full-length Exam Tests (data in exam-NN.js). "ready" lists the papers that are available. */
 window.IELTS_EXAM_INDEX = [
   { topics: "L: volunteer weekend · Hollins Park map · food-waste report · biomimicry", ready: ["listening", "writing", "speaking"] },
+  { topics: "L: pottery course · repair café · river field trip · trees in cities", ready: ["listening", "writing", "speaking"] },
+  { topics: "L: leisure centre · mill museum · advertising presentation · laughter", ready: ["listening", "writing", "speaking"] },
+  { topics: "L: flat repairs · wildlife rescue · plant-light experiment · Tambora 1815", ready: ["listening", "writing", "speaking"] },
+  { topics: "L: charity run · recycling changes · documentary review · deep-sea vents", ready: ["listening", "writing", "speaking"] },
 ];
 
 /** Builders: keep the test files short and consistent. */
