@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practice Tests: 10 Full IELTS Tests — IELTS 7.0 Academy</title>
+  <meta name="description" content="10 complete IELTS practice tests. Choose a skill (Listening, Reading, Writing, Speaking) and a test, or sit a full 4-skill test with timers, audio and a final band report.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="assets/css/main.css?v=__BUILD__">
+  <script>try{var t=localStorage.getItem("ielts-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-page="practice">
+  <div id="site-header"></div>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="content">
+      <div class="content-inner wide">
+
+        <header class="page-hero" style="--accent:#fb923c">
+          <nav class="crumbs"><a href="index.html">Home</a><span>/</span><span>Practice</span><span>/</span><span>Practice tests</span></nav>
+          <div class="eyebrow">Module 09 · Practice</div>
+          <h1>Practice Tests: 10 Full IELTS Tests</h1>
+          <p class="lead">Ten complete tests in the IELTS Academic format. Practise one skill at a time, or sit a <strong>full test</strong> — Listening, Reading, Writing and Speaking in order, with exam timers — and finish with an overall band report.</p>
+          <div class="page-meta"><span>🎧 400 listening questions with audio</span><span>📖 30 reading passages · 400 questions</span><span>✍️ 20 writing tasks</span><span>🎙️ 10 speaking tests</span></div>
+        </header>
+
+        <section class="doc-section" id="choose" data-title="Choose a test">
+          <div class="sec-head"><h2><span class="sec-num">9.1</span>Choose a test</h2></div>
+          <div class="pick-steps">
+            <div>
+              <div class="pick-label">1 · Mode</div>
+              <div class="mode-pick" id="mode-pick">
+                <button type="button" data-mode="skill"><b>🎯 Single skill</b><small>One paper at a time</small></button>
+                <button type="button" data-mode="full"><b>🏁 Full test · 4 skills</b><small>L → R → W → S · about 2 h 45 min</small></button>
+              </div>
+            </div>
+            <div id="skill-step">
+              <div class="pick-label">2 · Skill</div>
+              <div class="skill-pick" id="skill-pick">
+                <button type="button" data-skill="listening" style="--accent:#70cff8">🎧 Listening<small>~30 min · 40 Q</small></button>
+                <button type="button" data-skill="reading" style="--accent:#34d399">📖 Reading<small>60 min · 40 Q</small></button>
+                <button type="button" data-skill="writing" style="--accent:#d4af37">✍️ Writing<small>60 min · 2 tasks</small></button>
+                <button type="button" data-skill="speaking" style="--accent:#a78bfa">🎙️ Speaking<small>11–14 min · 3 parts</small></button>
+              </div>
+            </div>
+          </div>
+          <div class="pick-label" id="test-label">3 · Test</div>
+          <div class="test-grid" id="test-grid"></div>
+          <div class="start-bar glass">
+            <div id="start-summary" class="small"></div>
+            <span class="spacer"></span>
+            <button class="btn primary" id="start-btn" type="button">Start →</button>
+          </div>
+        </section>
+
+        <section class="doc-section" id="runner" data-title="Test room">
+          <div class="sec-head"><h2><span class="sec-num">9.2</span>Test room</h2></div>
+          <div id="runner-empty" class="callout note"><div class="ci">🧪</div><div><span class="ct">No test running</span><p>Choose a mode, a skill and a test above, then press <b>Start</b>. You can also link straight to a test, e.g. <code>practice.html#t=3&amp;s=reading</code> or <code>#t=5&amp;s=full</code>.</p></div></div>
+          <div id="runner-wrap" hidden>
+            <div class="runner-head glass">
+              <div><div class="eyebrow" id="rh-eyebrow"></div><h3 id="rh-title" style="margin:0"></h3></div>
+              <span class="spacer"></span>
+              <button class="btn sm ghost" id="rh-exit" type="button">✕ Exit test</button>
+            </div>
+            <div class="stepper" id="stepper" hidden></div>
+            <div id="runner-body"></div>
+            <div class="runner-foot" id="runner-foot"></div>
+          </div>
+        </section>
+
+        <section class="doc-section" id="how" data-title="How to use the practice tests">
+          <div class="sec-head"><h2><span class="sec-num">9.3</span>How to use the practice tests</h2></div>
+          <div class="grid grid-2">
+            <div class="glass card accent" style="--accent:var(--blue)"><h4>Exam conditions</h4><ul class="small"><li>Use <strong>Exam mode</strong> in Listening: each part plays once with reading time.</li><li>Start the 60-minute timers in Reading and Writing and stop when they run out.</li><li>No dictionary, no pausing, phone away. Sit the first three papers back-to-back in a full test.</li></ul></div>
+            <div class="glass card accent" style="--accent:var(--green)"><h4>Review afterwards</h4><ul class="small"><li>Every Listening and Reading answer has an explanation. Read them all — including the ones you got right by guessing.</li><li>Listening transcripts highlight the answer locations after marking.</li><li>Log mistakes by type (spelling, distractor, NOT GIVEN…) in your mistake log.</li></ul></div>
+            <div class="glass card accent" style="--accent:var(--gold)"><h4>Writing & Speaking scores</h4><ul class="small"><li>These are <strong>self-assessed</strong> against the Band 7 criteria. Be strict: compare with the model answers in the Writing and Speaking modules.</li><li>Each task includes a Band 7 plan to check your ideas and structure after you finish.</li><li>Record your speaking test and listen back before you score it.</li></ul></div>
+            <div class="glass card accent" style="--accent:var(--red)"><h4>Suggested schedule</h4><ul class="small"><li>Tests 1–3: single skills, learning the formats.</li><li>Tests 4–8: one full test per week (see the 12-week plan).</li><li>Tests 9–10: final mocks in the last two weeks, at the same time of day as your real test.</li></ul></div>
+          </div>
+          <p class="small muted">All tests are original practice material in the IELTS style, not official IELTS papers. Charts in Writing Task 1 use invented practice data. Band conversions are typical estimates.</p>
+        </section>
+
+        <div id="pager"></div>
+      </div>
+    </main>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="assets/js/data/vocab.js?v=__BUILD__"></script>
+  <script src="assets/js/core.js?v=__BUILD__"></script>
+  <script src="assets/js/quiz.js?v=__BUILD__"></script>
+  <script src="assets/js/runners.js?v=__BUILD__"></script>
+  <script src="assets/js/data/tests/index.js?v=__BUILD__"></script>
+  <script src="assets/js/pages/practice.js?v=__BUILD__"></script>
+</body>
+</html>

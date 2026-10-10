@@ -28,6 +28,21 @@
       ],
     },
     {
+      id: "guide", file: "guide.html", num: "01.5", group: "Start here",
+      title: "Learning Guidelines: Your Path to 7.0", short: "Learning Guidelines", icon: "🗺️", accent: "#d4af37",
+      desc: "A step-by-step study path for each skill — what to learn, how to practise with the 10 tests, and when to move on.",
+      sections: [
+        ["how", "How to use these guidelines", "how to use stages study path"],
+        ["foundation", "Foundation: vocabulary & grammar", "foundation vocabulary grammar daily"],
+        ["listening", "Listening study path", "listening study path stages practice tests"],
+        ["reading", "Reading study path", "reading study path stages practice tests"],
+        ["writing", "Writing study path", "writing study path stages feedback essays"],
+        ["speaking", "Speaking study path", "speaking study path stages recording"],
+        ["weekly", "A weekly study template", "weekly template timetable schedule"],
+        ["milestones", "Milestones checklist", "milestones checklist progress self-check"],
+      ],
+    },
+    {
       id: "listening", file: "listening.html", num: "02", group: "Four skills",
       title: "Listening: 30/40 and Above", short: "Listening", icon: "🎧", accent: "#70cff8",
       desc: "Four parts, every question type, distractor traps, a dictation trainer and a full 40-question test with audio.",
@@ -128,6 +143,16 @@
         ["resources", "Trusted resources", "resources books cambridge websites"],
       ],
     },
+    {
+      id: "practice", file: "practice.html", num: "09", group: "Practice",
+      title: "Practice Tests: 10 Full IELTS Tests", short: "Practice Tests", icon: "📝", accent: "#fb923c",
+      desc: "10 complete tests. Practise one skill at a time, or sit a full 4-skill test with timers and a final band report.",
+      sections: [
+        ["choose", "Choose a test", "practice test choose skill full test 10 tests mock"],
+        ["runner", "Test room", "test room listening reading writing speaking full test timer"],
+        ["how", "How to use the practice tests", "how to use tips exam conditions review"],
+      ],
+    },
   ];
 
   /* --------------------------------------------- Trusted references */
@@ -147,6 +172,7 @@
   };
   const REFS = {
     overview: ["ielts", "bcPrep", "idpPrep"],
+    guide: ["bcPrep", "idpPrep", "bbc6", "guardian", "ozdic"],
     listening: ["bcPrep", "idpPrep", "bbc6", "ted", "bbc"],
     reading: ["bcPrep", "idpPrep", "guardian", "conversation", "awl"],
     writing: ["bcPrep", "idpPrep", "ozdic", "camDict", "awl"],
@@ -154,6 +180,7 @@
     vocabulary: ["awl", "ozdic", "camDict", "youglish"],
     grammar: ["bcPrep", "camDict", "bbc"],
     plan: ["ielts", "bcPrep", "idpPrep", "bbc6", "guardian"],
+    practice: ["ielts", "bcPrep", "idpPrep"],
   };
 
   const $ = (s, r = document) => r.querySelector(s);
@@ -330,12 +357,11 @@
           <span>IELTS 7.0 Academy<small>Band 7 Handbook</small></span>
         </a>
         <nav class="main-nav" aria-label="Main navigation">
-          <a href="index.html" class="${pageId === "home" ? "active" : ""}">Home</a>
           <div class="nav-drop ${currentPage ? "active" : ""}">
             <button aria-haspopup="true">Modules ▾</button>
             <div class="nav-drop-menu">${modLinks}</div>
           </div>
-          ${nav("overview", "Overview")}${nav("listening", "Listening")}${nav("reading", "Reading")}${nav("writing", "Writing")}${nav("speaking", "Speaking")}${nav("plan", "Plan")}
+          ${nav("overview", "Overview")}${nav("guide", "Guide")}${nav("listening", "Listening")}${nav("reading", "Reading")}${nav("writing", "Writing")}${nav("speaking", "Speaking")}${nav("practice", "Practice")}${nav("plan", "Plan")}
         </nav>
         <div class="header-spacer"></div>
         <div class="global-search" role="search">
@@ -554,7 +580,7 @@
       <footer class="site-footer">
         <div class="footer-inner">
           <div><b style="color:var(--text)">IELTS 7.0 Academy</b> — A self-study handbook for reaching Band 7 in Listening, Reading, Writing and Speaking.<br>
-          All practice passages, recordings scripts and model answers are original training material written in the IELTS style; they are not official IELTS test content.<br>
+          All practice tests, passages, recording scripts and model answers are original training material written in the IELTS style; they are not official IELTS test content.<br>
           Your progress is stored only in this browser.</div>
           <div class="footer-links">
             ${SITE.map((p) => `<a href="${p.file}">${esc(p.short)}</a>`).join("")}

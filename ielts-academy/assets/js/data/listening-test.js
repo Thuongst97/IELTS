@@ -3,6 +3,30 @@
    Scripts are spoken with the browser's text-to-speech. [[…]] marks the
    words that carry an answer (highlighted in the transcript after marking).
    ========================================================================= */
+/* Map for Part 2, questions 15–20 */
+function westbrookMap() {
+  const pin = (l, x, y) => `<g class="map-pin"><circle cx="${x}" cy="${y}" r="13"/><text x="${x}" y="${y + 4.5}" text-anchor="middle">${l}</text></g>`;
+  return `<div class="map-wrap"><svg viewBox="0 0 600 440" role="img" aria-label="Map of Westbrook Heritage Park with places labelled A to H">
+    <rect class="map-grass" x="20" y="20" width="560" height="380" rx="18"/>
+    <ellipse class="map-wood" cx="130" cy="92" rx="105" ry="66"/>
+    <text class="map-label" x="150" y="140">Woodland</text>
+    <ellipse class="map-water" cx="430" cy="190" rx="95" ry="58"/>
+    <text class="map-label" x="430" y="194" text-anchor="middle">Lake</text>
+    <path class="map-path" d="M300,400 L300,62"/>
+    <path class="map-path" d="M300,215 L80,215"/>
+    <path class="map-path" d="M300,215 L313,206"/>
+    <ellipse class="map-path" cx="430" cy="190" rx="118" ry="82" style="stroke-width:6"/>
+    <circle class="map-feature" cx="300" cy="215" r="13"/><text class="map-label" x="318" y="244">Fountain</text>
+    <rect class="map-feature" x="196" y="282" width="46" height="26" rx="4"/><text class="map-label" x="219" y="326" text-anchor="middle">Café</text>
+    <rect fill="var(--paper)" x="276" y="392" width="48" height="12"/>
+    <text class="map-label" x="300" y="428" text-anchor="middle" style="font-weight:800">▲ Main entrance</text>
+    <g transform="translate(548 52)"><path d="M0,-18 L7,6 L0,1 L-7,6 Z" fill="var(--text)"/><text class="map-label" x="0" y="22" text-anchor="middle">N</text></g>
+    <text class="map-label" x="572" y="250" text-anchor="end" style="font-size:10px">Westbrook Manor →</text>
+    ${pin("A", 352, 352)}${pin("B", 248, 352)}${pin("C", 100, 70)}${pin("D", 58, 215)}
+    ${pin("E", 430, 292)}${pin("F", 430, 86)}${pin("G", 560, 190)}${pin("H", 300, 46)}
+  </svg></div>`;
+}
+
 window.LISTENING_TEST = {
   parts: [
     {
@@ -173,7 +197,7 @@ window.LISTENING_TEST = {
       part: 2,
       title: "Part 2 · Questions 15–20",
       instr: "Label the map below. Choose the correct letter, <b>A–H</b>, for each place.",
-      map: true,
+      context: westbrookMap(),
       questions: [
         { n: 15, type: "select", text: "Visitor centre {}", options: ["A", "B", "C", "D", "E", "F", "G", "H"], answer: "A", why: "“The first building on your right” as you come in from the entrance (B, on the left, is the toilets)." },
         { n: 16, type: "select", text: "Walled garden {}", options: ["A", "B", "C", "D", "E", "F", "G", "H"], answer: "D", why: "Left at the fountain, follow the path west — it's at the end, on the western edge." },

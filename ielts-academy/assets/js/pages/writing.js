@@ -4,7 +4,6 @@
   const { $, $$, esc, store, toast, Timer, pick } = window.IELTS;
 
   /* ================================================== Charts (practice data) */
-  const COLORS = ["#70cff8", "#d4af37", "#a78bfa"];
   const LINE = {
     title: "Average daily bicycle journeys (thousands)",
     x: [2000, 2005, 2010, 2015, 2020, 2025],
@@ -18,45 +17,7 @@
     max: 70, step: 10,
   };
 
-  function axes(W, H, P, max, step) {
-    let g = "";
-    for (let v = 0; v <= max; v += step) {
-      const y = H - P.b - (v / max) * (H - P.t - P.b);
-      g += `<line class="${v ? "ch-grid" : "ch-axis"}" x1="${P.l}" x2="${W - P.r}" y1="${y}" y2="${y}"/><text class="ch-tick" x="${P.l - 8}" y="${y + 4}" text-anchor="end">${v}</text>`;
-    }
-    return g;
-  }
-  function legend(series, colors) {
-    return `<div class="ch-legend">${series.map(([n], i) => `<span><i style="background:${colors[i]}"></i>${esc(n)}</span>`).join("")}</div>`;
-  }
-  function lineChart(d) {
-    const W = 640, H = 300, P = { l: 44, r: 20, t: 16, b: 34 };
-    const xs = (i) => P.l + (i / (d.x.length - 1)) * (W - P.l - P.r);
-    const ys = (v) => H - P.b - (v / d.max) * (H - P.t - P.b);
-    let s = axes(W, H, P, d.max, d.step);
-    d.x.forEach((x, i) => { s += `<text class="ch-tick" x="${xs(i)}" y="${H - 12}" text-anchor="middle">${x}</text>`; });
-    d.series.forEach(([, vals], k) => {
-      s += `<polyline class="ch-line" stroke="${COLORS[k]}" points="${vals.map((v, i) => `${xs(i)},${ys(v)}`).join(" ")}"/>`;
-      vals.forEach((v, i) => { s += `<circle cx="${xs(i)}" cy="${ys(v)}" r="3.5" fill="${COLORS[k]}"><title>${d.series[k][0]} ${d.x[i]}: ${v}</title></circle>`; });
-    });
-    return `<h5>${esc(d.title)}</h5><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.title)}">${s}</svg>${legend(d.series, COLORS)}`;
-  }
-  function barChart(d) {
-    const W = 640, H = 300, P = { l: 44, r: 20, t: 16, b: 34 };
-    const groupW = (W - P.l - P.r) / d.x.length, bw = Math.min(46, (groupW - 24) / d.series.length);
-    const ys = (v) => H - P.b - (v / d.max) * (H - P.t - P.b);
-    let s = axes(W, H, P, d.max, d.step);
-    d.x.forEach((x, i) => {
-      const gx = P.l + i * groupW + (groupW - bw * d.series.length) / 2;
-      d.series.forEach(([, vals], k) => {
-        const v = vals[i];
-        s += `<rect x="${gx + k * bw}" y="${ys(v)}" width="${bw - 4}" height="${H - P.b - ys(v)}" rx="3" fill="${COLORS[k]}"><title>${d.series[k][0]} ${x}: ${v}%</title></rect>`;
-        s += `<text class="ch-tick" x="${gx + k * bw + (bw - 4) / 2}" y="${ys(v) - 5}" text-anchor="middle">${v}</text>`;
-      });
-      s += `<text class="ch-tick" x="${P.l + i * groupW + groupW / 2}" y="${H - 12}" text-anchor="middle">${x}</text>`;
-    });
-    return `<h5>${esc(d.title)}</h5><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.title)}">${s}</svg>${legend(d.series, COLORS)}`;
-  }
+  const lineChart = (d) => window.IELTS.Charts.line(d), barChart = (d) => window.IELTS.Charts.bar(d);
   $("#chart-line").innerHTML = lineChart(LINE);
 
   /* ================================================== Studio tasks */

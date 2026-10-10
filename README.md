@@ -9,6 +9,7 @@ plain HTML/CSS/JS, no build step, a shared `core.js` runtime (header, sidebar, s
 | # | Page | What's inside |
 |---|------|---------------|
 | 01 | `overview.html` | What IELTS is, test structure, inside each paper, Academic vs GT, the 9-band scale, scoring criteria for every skill, raw-score → band tables, overall band calculator, example questions, Band 7 strategy |
+| 01.5 | `guide.html` | Learning guidelines: a 3-stage study path (6.0 → 6.5 → 7.0) for each skill plus vocabulary & grammar, linked to lessons and to Practice Tests 1–10; weekly template; saved milestone checklist |
 | 02 | `listening.html` | Question-type tactics, distractor traps, spelling/number dictation trainer, full 40-question test with text-to-speech audio (exam mode), transcripts |
 | 03 | `reading.html` | Time management, question-type tactics, TRUE/FALSE/NOT GIVEN trainer, paraphrase recognition, full 40-question split-screen test with timer and highlighter |
 | 04 | `writing.html` | Band 6/7/8 descriptors, Task 1 reports & GT letters, Task 2 essay types, annotated Band 8 models, Band 6 → 7 upgrades, common errors, timed writing studio with self-assessment |
@@ -16,6 +17,7 @@ plain HTML/CSS/JS, no build step, a shared `core.js` runtime (header, sidebar, s
 | 06 | `vocabulary.html` | 120 topic words with collocations, examples and Vietnamese meanings, collocation/paraphrase quizzes, spaced-repetition flashcards, linking words |
 | 07 | `grammar.html` | Complex sentences, tenses, conditionals, clauses, passive, articles, punctuation, error-correction quiz |
 | 08 | `plan.html` | Gap diagnosis, 12-week roadmap with saved checklists, daily routine, mock-test tracker with chart, test-day checklist, resources |
+| 09 | `practice.html` | **10 full practice tests.** Pick a test and one skill, or a full 4-skill test (L → R → W → S) with timers and a final band report. Each test: Listening 4 parts / 40 Q with audio, Reading 3 passages / 40 Q, Writing Task 1 (chart) + Task 2, Speaking Parts 1–3. Deep links: `practice.html#t=3&s=reading`, `#t=5&s=full` |
 
 All practice passages, recording scripts and model answers are original training material written in the IELTS style.
 Progress (quiz results, drafts, flashcards, checklists) is stored only in the browser's `localStorage`.
@@ -43,6 +45,8 @@ ielts-academy/
   assets/css/main.css        design system (dark + light themes)
   assets/js/core.js          site map, layout, search, storage, timer, TTS, band helpers
   assets/js/quiz.js          shared quiz engine (gap, MCQ, TFNG/YNNG, matching, choose-two)
-  assets/js/data/*.js        listening/reading tests, vocabulary, speaking bank
+  assets/js/runners.js       shared Listening/Reading runners and Task 1 charts (line, bar, pie, table, process)
+  assets/js/data/*.js        module tests, vocabulary, speaking bank
+  assets/js/data/tests/      practice tests: index.js (picker + builders) and test-01.js … test-10.js (loaded on demand)
   assets/js/pages/*.js       page-specific behaviour
 ```
