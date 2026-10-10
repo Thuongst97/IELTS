@@ -962,10 +962,6 @@ abbr[data-tip], span[data-tip] { border-bottom: 1px dotted var(--faint); }
 .as-cell input { width: 100%; min-width: 0; padding: 6px 8px; border-radius: 7px; border: 1px solid var(--border-hi); background: var(--paper); color: var(--text); font: 500 0.9rem var(--font); }
 .as-cell input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-dim); }
 .as-grid.key .as-cell input { border-style: dashed; }
-.an-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(60px, 1fr) 52px; gap: 10px; align-items: center; font-size: 0.84rem; padding: 4px 0; }
-.an-row b { font-family: var(--mono); text-align: right; }
-.an-bar { height: 8px; border-radius: 99px; background: var(--bg-3); overflow: hidden; }
-.an-bar i { display: block; height: 100%; border-radius: 99px; }
 .w-prompt { width: 100%; resize: vertical; margin-bottom: 12px; font-family: var(--serif); }
 .sp-setup textarea { width: 100%; margin-top: 6px; resize: vertical; }
 .sp-setup label { display: flex; flex-direction: column; }

@@ -341,7 +341,7 @@
         <div class="review glass">
           <div class="rv-head"><h4>📋 Answers &amp; explanations</h4><span class="spacer"></span>
             <div class="rv-filter" role="group"><button type="button" data-f="all" class="on">All (40)</button><button type="button" data-f="wrong">❌ Wrong (${wrongIdx.length})</button><button type="button" data-f="right">✅ Correct (${40 - wrongIdx.length})</button></div></div>
-          <p class="small muted" style="margin:6px 0 12px">For every wrong answer: read the automatic diagnosis, then open the ${L ? "<b>audioscript</b> at the back of your book (the answers are underlined there)" : "<b>passage</b>"}, find the evidence and copy the key phrase into the box. Choosing a reason builds your mistake profile below.</p>
+          <p class="small muted" style="margin:6px 0 12px">For every wrong answer: read the automatic diagnosis, then open the ${L ? "<b>audioscript</b> at the back of your book (the answers are underlined there)" : "<b>passage</b>"}, find the evidence and copy the key phrase into the box. Choose the reason for each mistake to see how to fix it.</p>
           <div class="rv-list">${ok.map((good, i) => item(i, good, types[i])).join("")}</div>
         </div>`;
       wireReview(out);
@@ -377,7 +377,7 @@
     }
     function wireReview(out) {
       const save = () => store.set("cam-rev:" + id, rev);
-      // Save the automatic reasons so the mistake profile works even if the learner changes nothing.
+      // Save the automatic reasons so they stay with the review even if the learner changes nothing.
       $$(".rv-item", out).forEach((it) => {
         const i = +it.dataset.i, sel = $(".rv-reason", it);
         if (sel && String(keyState.k[i] || "").trim() && !(rev[i] && rev[i].reason != null) && sel.value) { rev[i] = { ...(rev[i] || {}), reason: sel.value, auto: true }; }
@@ -398,7 +398,7 @@
           const r = REASON[e.target.value];
           $(".rv-fix", it).innerHTML = r && r[0] ? `<b>🛠 How to fix it:</b> ${esc(r[2])}` : "";
         }
-        save(); renderAnalysis();
+        save();
       });
       let noteT = null;
       out.addEventListener("input", (e) => {
@@ -415,7 +415,6 @@
           it.hidden = (btn.dataset.f === "wrong" && good) || (btn.dataset.f === "right" && !good);
         });
       });
-      renderAnalysis();
     }
     count();
     if (store.get("cam-mark:" + id, null)) showResult(false);
@@ -505,47 +504,11 @@
     }));
   }
 
-  function renderAnalysis() {
-    const host = $("#cam-analysis");
-    const byType = {}, reasons = {};
-    let marked = 0;
-    store.keys().forEach((k) => {
-      const m = k.match(/^cam-mark:(b\d+t\d+):(listening|reading)$/);
-      if (!m) return;
-      const mk = store.get(k, null), rev = store.get(`cam-rev:${m[1]}:${m[2]}`, {});
-      if (!mk) return;
-      marked++;
-      mk.ok.forEach((good, i) => {
-        if (!mk.types[i]) return; // no key entered for this question
-        const tId = (rev[i] && rev[i].type) || mk.types[i];
-        const T = CTYPES[m[2]].find((x) => x[0] === tId);
-        if (!T) return;
-        const key = `${m[2]}:${tId}`;
-        const o = (byType[key] = byType[key] || { skill: m[2], label: T[1], ok: 0, n: 0 });
-        o.n++; if (good) o.ok++;
-        if (!good && rev[i] && rev[i].reason) reasons[rev[i].reason] = (reasons[rev[i].reason] || 0) + 1;
-      });
-    });
-    if (!marked) { host.innerHTML = `<p class="muted">Your mistake profile appears after you mark your first Cambridge Listening or Reading test.</p>`; return; }
-    const types = Object.values(byType).filter((x) => x.n >= 3).sort((a, b) => a.ok / a.n - b.ok / b.n);
-    const rs = Object.entries(reasons).sort((a, b) => b[1] - a[1]);
-    const total = rs.reduce((s, x) => s + x[1], 0) || 1;
-    host.innerHTML = `
-      <div class="grid grid-2">
-        <div class="glass card"><h4 style="margin-top:0">Accuracy by question type</h4><p class="small muted">From ${marked} marked paper(s). Weakest first; types with fewer than 3 questions are hidden.</p>
-          ${types.length ? types.map((x) => { const p = Math.round((x.ok / x.n) * 100); return `<div class="an-row"><span>${SK[x.skill].icon} ${esc(x.label)}</span><span class="an-bar"><i style="width:${p}%;background:${p >= 75 ? "var(--green)" : p >= 60 ? "var(--amber)" : "var(--red)"}"></i></span><b>${x.ok}/${x.n}</b></div>`; }).join("") : `<p class="muted small">Not enough data yet.</p>`}</div>
-        <div class="glass card"><h4 style="margin-top:0">Why you lose marks</h4><p class="small muted">From the reasons in your reviews (automatic ones included; change any that are wrong).</p>
-          ${rs.length ? rs.map(([r, n]) => `<div class="an-row"><span>${esc(REASON[r] ? REASON[r][1] : r)}</span><span class="an-bar"><i style="width:${Math.round((n / total) * 100)}%;background:var(--purple)"></i></span><b>${n}</b></div>`).join("")
-            + (REASON[rs[0][0]] ? `<div class="callout target mt"><div class="ci">🎯</div><div><span class="ct">Fix this first: ${esc(REASON[rs[0][0]][1])}</span><p class="small">${esc(REASON[rs[0][0]][2])}</p></div></div>` : "") : `<p class="muted small">No mistakes logged yet.</p>`}</div>
-      </div>`;
-  }
-
   /* ================================================== Boot */
   renderRanges();
   renderGrid();
   paintPick();
   renderResults();
-  renderAnalysis();
   function route() {
     const m = location.hash.match(/b=(\d+)&t=(\d)&s=(\w+)/);
     if (!m || +m[1] < 1 || +m[1] > 21 || +m[2] < 1 || +m[2] > 4 || !SK[m[3]]) return;

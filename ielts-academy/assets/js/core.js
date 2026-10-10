@@ -177,7 +177,6 @@
         ["choose", "Choose a Cambridge test", "cambridge 15 16 17 18 19 20 21 test choose book"],
         ["room", "Answer sheet & review", "answer sheet answer key mark review explanation mistakes"],
         ["results", "My Cambridge results", "results scores bands tracker cambridge"],
-        ["analysis", "My mistake profile", "analysis mistakes question types weaknesses reasons"],
       ],
     },
   ];
