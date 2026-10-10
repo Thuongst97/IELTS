@@ -696,6 +696,48 @@
     window.addEventListener("scroll", hide, { passive: true });
   }
 
+  /* --------------------------------------------------------- Table layout */
+  /**
+   * Browsers give most of a table's width to its longest column, which squeezes
+   * short label columns ("Line graph", "Part 2 · Q11–20") onto two lines.
+   * Short columns are kept on one line; medium ones get a sensible minimum width.
+   */
+  /** Length of the longest line in a cell (a <br> or a list item starts a new line). */
+  const cellText = (c) => {
+    const lines = c.innerHTML.replace(/<br\s*\/?>|<\/li>|<\/p>|<\/div>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&[a-z#0-9]+;/gi, "x").split("\n");
+    return Math.max(0, ...lines.map((l) => l.trim().replace(/\s+/g, " ").length));
+  };
+  function fitTables(root = document) {
+    $$("table.t", root).forEach((t) => {
+      if (t.dataset.fit) return;
+      t.dataset.fit = "1";
+      const cols = [];
+      Array.from(t.tBodies).forEach((b) => Array.from(b.rows).forEach((r) => {
+        let ci = 0;
+        Array.from(r.cells).forEach((c) => { if (c.colSpan === 1) (cols[ci] = cols[ci] || []).push(c); ci += c.colSpan; });
+      }));
+      cols.forEach((cells, ci) => {
+        if (!cells || !cells.length) return;
+        const longest = Math.max(...cells.map(cellText));
+        // Row labels (first column) may be a little longer and still stay on one line.
+        if (longest <= 16) cells.forEach((c) => c.classList.add("nw", "nw-s"));
+        else if (longest <= (ci === 0 ? 32 : 24)) cells.forEach((c) => c.classList.add("nw"));
+        else if (longest <= 60) cells.forEach((c) => c.style.setProperty("--cw", `${(Math.min(longest, 32) * 0.45).toFixed(1)}em`));
+      });
+      $$("thead th", t).forEach((th) => { const n = cellText(th); if (n <= 24) th.classList.add("nw"); if (n <= 12) th.classList.add("nw-s"); });
+    });
+  }
+  function watchTables() {
+    fitTables();
+    if (!window.MutationObserver) return;
+    let pending = false;
+    new MutationObserver(() => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => { pending = false; fitTables(); });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+
   /* --------------------------------------------------------- Boot */
   function boot() {
     initTooltips();
@@ -711,6 +753,7 @@
     initTabs();
     initModelToggles();
     initSpeakButtons();
+    watchTables();
     if (location.hash) {
       const jump = () => {
         const t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
@@ -724,7 +767,7 @@
   window.IELTS = {
     SITE, $, $$, esc, norm, slug, shuffle, pick, store, toast, TTS, Timer,
     rawToBand, overallBand, fmtBand, saveResult, getResults, initTabs, initModelToggles,
-    TABLES,
+    TABLES, fitTables,
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
