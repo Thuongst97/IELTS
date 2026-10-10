@@ -569,7 +569,8 @@
   function renderReferences() {
     const keys = REFS[pageId];
     const pager = $("#pager");
-    if (!keys || !pager) return;
+    // Pages with their own annotated resources section (Study Plan) don't get a second one.
+    if (!keys || !pager || $("#resources")) return;
     const sec = document.createElement("section");
     sec.className = "doc-section";
     sec.id = "references";
